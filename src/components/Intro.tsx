@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import Ambient from "./Ambient";
+import HandwrittenSylph from "./HandwrittenSylph";
 
 type Props = { onDone: () => void };
 
@@ -16,24 +17,7 @@ export default function Intro({ onDone }: Props) {
     <main className="sy-sky sy-intro-out fixed inset-0 z-20 flex flex-col items-center justify-center gap-2">
       <Ambient />
       <h1 className="sr-only">Sylph</h1>
-      <div className="sy-wm" aria-hidden="true">
-        <div className="sy-reveal">
-          <span className="sy-word">Sylph</span>
-        </div>
-        <div className="sy-nib">
-          <div className="sy-lift">
-            <svg
-              className="sy-pen"
-              width="46"
-              height="46"
-              viewBox="0 0 46 46"
-            >
-              <path d="M2 44 L30 8 L40 15 L10 46 Z" fill="#c7cbb8" />
-            </svg>
-            <div className="sy-dot" />
-          </div>
-        </div>
-      </div>
+      <HandwrittenSylph />
       <p
         className="sy-tagline text-center text-mist"
         style={{ fontFamily: "var(--font-hand)", fontSize: "clamp(26px, 6vw, 38px)" }}

@@ -53,110 +53,22 @@ body {
   background: radial-gradient(ellipse at 50% 40%, var(--deep) 0%, var(--night) 68%);
 }
 
-.sy-wm {
-  position: relative;
-  font-size: clamp(96px, 24vw, 200px);
-  width: 2.5em;
-  height: 1.25em;
-}
-
-.sy-reveal {
-  position: absolute;
-  inset: 0 auto 0 0;
-  width: 0;
-  overflow: hidden;
-  animation: sy-write 3.2s cubic-bezier(0.45, 0, 0.35, 1) 0.5s forwards;
-}
-
-.sy-word {
-  display: block;
-  white-space: nowrap;
-  font-family: var(--font-script);
-  font-weight: 700;
-  font-size: 1em;
-  line-height: 1.25em;
-  color: var(--mist);
-}
-
-.sy-nib {
-  position: absolute;
-  top: 0.88em;
-  left: 0;
-  width: 0;
-  height: 0;
-  opacity: 0;
-  animation: sy-travel 3.2s cubic-bezier(0.45, 0, 0.35, 1) 0.5s forwards;
-}
-
-.sy-lift {
-  animation: sy-lift 2.6s ease-in 3.7s forwards;
-}
-
-.sy-dot {
-  position: absolute;
-  left: -7px;
-  top: -7px;
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  background: var(--glow);
-  box-shadow: 0 0 20px 9px rgb(214 228 130 / 0.55);
-  animation: sy-bob 0.32s ease-in-out infinite alternate;
-}
-
-.sy-pen {
-  position: absolute;
-  left: -2px;
-  top: -44px;
-  animation: sy-penfade 0.4s ease-out 3.5s forwards;
+.sy-hand {
+  width: clamp(300px, 72vw, 660px);
+  height: auto;
+  overflow: visible;
+  filter: drop-shadow(0 0 6px rgb(214 228 130 / 0.3));
 }
 
 .sy-tagline {
   opacity: 0;
-  animation: sy-rise 1.2s ease-out 3.9s forwards;
+  animation: sy-rise 1.2s ease-out 4.5s forwards;
 }
 
 .sy-intro-out {
   animation: sy-out 0.6s ease-in 6.6s forwards;
 }
 
-@keyframes sy-write {
-  to {
-    width: 100%;
-  }
-}
-@keyframes sy-travel {
-  0% {
-    left: 0;
-    opacity: 0;
-  }
-  4% {
-    opacity: 1;
-  }
-  100% {
-    left: 100%;
-    opacity: 1;
-  }
-}
-@keyframes sy-lift {
-  to {
-    transform: translate(70px, -200px) scale(0.6);
-    opacity: 0;
-  }
-}
-@keyframes sy-bob {
-  from {
-    margin-top: -12px;
-  }
-  to {
-    margin-top: 10px;
-  }
-}
-@keyframes sy-penfade {
-  to {
-    opacity: 0;
-  }
-}
 @keyframes sy-rise {
   from {
     opacity: 0;
@@ -229,19 +141,10 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .sy-reveal {
-    animation: none;
-    width: 100%;
-  }
-  .sy-nib,
-  .sy-pen,
   .sy-firefly,
   .sy-leaf {
     animation: none;
     display: none;
-  }
-  .sy-lift {
-    animation: none;
   }
   .sy-tagline,
   .sy-home-in {
