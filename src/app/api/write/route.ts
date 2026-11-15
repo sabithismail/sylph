@@ -85,6 +85,8 @@ export async function POST(req: Request) {
       );
     }
     if (!res.ok) {
+      const detail = (await res.text().catch(() => "")).slice(0, 400);
+      console.error(`[write] Gemini ${res.status} model=${MODEL}: ${detail}`);
       return NextResponse.json(
         { error: "Sylph couldn't reach the words just now. Please try again." },
         { status: 502 },
