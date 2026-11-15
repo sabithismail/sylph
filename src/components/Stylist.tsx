@@ -5,7 +5,8 @@ import "@fontsource/playfair-display/400-italic.css";
 import "@fontsource/cormorant-garamond/500-italic.css";
 import "@fontsource/lora/400-italic.css";
 import "@fontsource/im-fell-english/400.css";
-import { useEffect, useId, useState } from "react";
+import { toBlob } from "html-to-image";
+import { useEffect, useId, useRef, useState } from "react";
 import { CONTRASTS, FONTS, TEMPLATES, type Contrast } from "@/lib/styles";
 
 const KEY = "sylph-style";
@@ -23,6 +24,9 @@ export default function Stylist({
   kind: "poem" | "story" | "quote";
 }) {
   const uid = useId();
+  const cardRef = useRef<HTMLDivElement>(null);
+  const [note, setNote] = useState("");
+  const [busy, setBusy] = useState(false);
   const [t, setT] = useState(TEMPLATES[0].id);
   const [f, setF] = useState(kind === "story" ? "lora" : FONTS[0].id);
   const [c, setC] = useState<Contrast>("normal");
@@ -54,6 +58,56 @@ export default function Stylist({
   const base = kind === "story" ? 1.2 : kind === "quote" ? 1.9 : 1.4;
   const size = `${(base * font.scale).toFixed(2)}rem`;
 
+  const plain = `${title && kind !== "quote" ? title + "\n\n" : ""}${text}`;
+  const site = typeof window === "undefined" ? "" : window.location.origin;
+  const message = (max: number) => {
+    const tail = `\n\n- written with Sylph ${site}`;
+    const body = plain.length > max - tail.length ? plain.slice(0, max - tail.length - 1) + "…" : plain;
+    return body + tail;
+  };
+  const open = (url: string) => window.open(url, "_blank", "noopener,noreferrer");
+
+  function flash(m: string) {
+    setNote(m);
+    setTimeout(() => setNote(""), 3500);
+  }
+
+  async function shareImage() {
+    if (!cardRef.current) return;
+    setBusy(true);
+    try {
+      const blob = await toBlob(cardRef.current, { pixelRatio: 2, cacheBust: true });
+      if (!blob) throw new Error("no image");
+      const file = new File([blob], "sylph.png", { type: "image/png" });
+      if (navigator.canShare?.({ files: [file] })) {
+        await navigator.share({ files: [file], text: "Written with Sylph" });
+        return;
+      }
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "sylph.png";
+      a.click();
+      setTimeout(() => URL.revokeObjectURL(url), 2000);
+      flash("Saved as an image. Post it on Instagram or anywhere you like.");
+    } catch (e) {
+      if (!(e instanceof DOMException && e.name === "AbortError")) {
+        flash("Couldn't make the image on this device. Try a screenshot of the card.");
+      }
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function copyAll() {
+    try {
+      await navigator.clipboard.writeText(message(5000));
+      flash("Copied.");
+    } catch {
+      flash("Copy isn't available here.");
+    }
+  }
+
   const chip = (on: boolean) =>
     `rounded-full border px-4 py-2 text-sm text-mist transition-transform duration-150 ease-out hover:-translate-y-0.5 active:scale-[0.97] ${on ? "border-glow bg-moss" : "border-stone"}`;
 
@@ -64,6 +118,7 @@ export default function Stylist({
       </h3>
 
       <div
+        ref={cardRef}
         className="flex flex-col gap-4 overflow-hidden rounded-3xl border p-7 sm:p-10"
         style={{ background: tpl.bg, borderColor: tpl.border, boxShadow: tpl.shadow }}
       >
@@ -142,6 +197,19 @@ export default function Stylist({
           ))}
         </div>
       </fieldset>
+
+      <div className="flex flex-col gap-3 border-t border-stone pt-5">
+        <p className="text-sm text-mist">Share</p>
+        <div className="flex flex-wrap gap-2">
+          <button type="button" className={chip(false)} onClick={() => open(`https://wa.me/?text=${encodeURIComponent(message(3000))}`)}>WhatsApp</button>
+          <button type="button" className={chip(false)} onClick={() => open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(message(270))}`)}>X</button>
+          <button type="button" className={chip(false)} onClick={() => open(`https://t.me/share/url?url=${encodeURIComponent(site || "https://sylph.app")}&text=${encodeURIComponent(plain.slice(0, 3500))}`)}>Telegram</button>
+          <button type="button" className={chip(false)} onClick={() => open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(site)}&quote=${encodeURIComponent(plain.slice(0, 500))}`)}>Facebook</button>
+          <button type="button" className={chip(false)} onClick={shareImage} disabled={busy}>{busy ? "Making image…" : "Image / Instagram"}</button>
+          <button type="button" className={chip(false)} onClick={copyAll}>Copy text</button>
+        </div>
+        <p className="text-sm text-sage" role="status" aria-live="polite">{note}</p>
+      </div>
     </section>
   );
 }
