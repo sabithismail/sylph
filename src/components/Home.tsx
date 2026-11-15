@@ -14,7 +14,7 @@ const PATHS = [
   },
   {
     title: "Tell a story",
-    href: undefined as string | undefined,
+    href: "/story",
     body: "Pick the length and the word count, share what you have lived through, and watch it become a tale.",
     icon: (
       <path d="M5 5h9a4 4 0 0 1 4 4v18a3 3 0 0 0-3-3H5zM27 5h-9M27 5v19h-9" />
