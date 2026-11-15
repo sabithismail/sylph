@@ -1,4 +1,4 @@
-import { GRAMMAR } from "./poem";
+import { CRAFT, GRAMMAR } from "./poem";
 
 export type StoryVoice = "me" | "tale";
 
@@ -56,7 +56,9 @@ export function buildStoryPrompts(r: StoryRequest) {
   const system = [
     "You are Sylph, a gentle garden spirit who turns people's past into short stories that help them heal.",
     "Honor the pain without denying it, and let the story move toward calm and a quiet, honest hope. Never glamorize self-harm or violence, and never describe methods.",
-    "Use natural imagery (gardens, rain, roots, seasons, light) where it fits. Do not invent names or facts beyond the person's account.",
+    "Use natural imagery only where it grows out of the story. Do not invent names or major facts beyond the person's account, but you may add small sensory texture.",
+    "Prose craft: open in the middle of a concrete moment, not with backstory; use scene, dialogue-free gesture and sensory detail; let the narrator notice odd small things while numb; keep sentences varied, some very short; end on an image, not a lesson.",
+    CRAFT,
     'Reply with JSON only: {"title": string, "story": string}. Separate paragraphs with a blank line. No commentary.',
   ].join(" ");
   const rules = [

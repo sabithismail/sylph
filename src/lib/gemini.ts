@@ -21,7 +21,7 @@ export async function generateJson(opts: {
     systemInstruction: { parts: [{ text: opts.system }] },
     contents: [{ role: "user", parts: [{ text: opts.user }] }],
     generationConfig: {
-      temperature: 1,
+      temperature: 1.05,
       maxOutputTokens: opts.maxOutputTokens,
       responseMimeType: "application/json",
       responseSchema: {
