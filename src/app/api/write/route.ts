@@ -8,7 +8,7 @@ import {
 } from "@/lib/poem";
 
 export const runtime = "nodejs";
-export const maxDuration = 30;
+export const maxDuration = 60;
 
 const MODEL = process.env.GEMINI_MODEL || "gemini-flash-latest";
 
@@ -51,78 +51,78 @@ export async function POST(req: Request) {
   }
 
   const { system, user } = buildPrompts(parsed.req);
-  const ctrl = new AbortController();
-  const timer = setTimeout(() => ctrl.abort(), 25_000);
-
-  try {
-    const res = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "x-goog-api-key": key },
-        signal: ctrl.signal,
-        body: JSON.stringify({
-          systemInstruction: { parts: [{ text: system }] },
-          contents: [{ role: "user", parts: [{ text: user }] }],
-          generationConfig: {
-            temperature: 1,
-            maxOutputTokens: 1500,
-            responseMimeType: "application/json",
-            responseSchema: {
-              type: "OBJECT",
-              properties: { title: { type: "STRING" }, poem: { type: "STRING" } },
-              required: ["title", "poem"],
-            },
-          },
-        }),
+  const body2 = JSON.stringify({
+    systemInstruction: { parts: [{ text: system }] },
+    contents: [{ role: "user", parts: [{ text: user }] }],
+    generationConfig: {
+      temperature: 1,
+      maxOutputTokens: 2000,
+      responseMimeType: "application/json",
+      responseSchema: {
+        type: "OBJECT",
+        properties: { title: { type: "STRING" }, poem: { type: "STRING" } },
+        required: ["title", "poem"],
       },
-    );
+    },
+  });
 
-    if (res.status === 429) {
-      return NextResponse.json(
-        { error: "Sylph's writing well is busy right now. Please try again in a little while." },
-        { status: 429 },
-      );
-    }
-    if (!res.ok) {
-      const detail = (await res.text().catch(() => "")).slice(0, 400);
-      console.error(`[write] Gemini ${res.status} model=${MODEL}: ${detail}`);
-      return NextResponse.json(
-        { error: "Sylph couldn't reach the words just now. Please try again." },
-        { status: 502 },
-      );
-    }
+  // Try the preferred model first, then lighter ones if Google is busy.
+  const models = [...new Set([MODEL, "gemini-flash-lite-latest", "gemini-2.5-flash", "gemini-2.5-flash-lite"])];
+  const started = Date.now();
+  let busy = false;
 
-    const data = (await res.json()) as {
-      candidates?: { content?: { parts?: { text?: string }[] } }[];
-    };
-    const text = data.candidates?.[0]?.content?.parts?.map((p) => p.text ?? "").join("") ?? "";
-
-    let title = "Untitled";
-    let poem = text.trim();
+  for (const model of models) {
+    const left = 52_000 - (Date.now() - started);
+    if (left < 4_000) break;
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), Math.min(14_000, left));
     try {
-      const j = JSON.parse(text) as { title?: string; poem?: string };
-      if (j.poem) {
-        poem = j.poem.trim();
-        title = (j.title ?? "Untitled").trim();
-      }
-    } catch {
-      /* fall back to the raw text */
-    }
-
-    if (!poem) {
-      return NextResponse.json(
-        { error: "Sylph came back with empty hands. Please try again." },
-        { status: 502 },
+      const res = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "x-goog-api-key": key },
+          signal: ctrl.signal,
+          body: body2,
+        },
       );
+      if (!res.ok) {
+        const detail = (await res.text().catch(() => "")).slice(0, 300);
+        console.error(`[write] Gemini ${res.status} model=${model}: ${detail}`);
+        if (res.status === 429 || res.status === 503) busy = true;
+        continue;
+      }
+      const data = (await res.json()) as {
+        candidates?: { content?: { parts?: { text?: string }[] } }[];
+      };
+      const text = data.candidates?.[0]?.content?.parts?.map((p) => p.text ?? "").join("") ?? "";
+      let title = "Untitled";
+      let poem = text.trim();
+      try {
+        const j = JSON.parse(text) as { title?: string; poem?: string };
+        if (j.poem) {
+          poem = j.poem.trim();
+          title = (j.title ?? "Untitled").trim();
+        }
+      } catch {
+        /* fall back to the raw text */
+      }
+      if (!poem) continue;
+      return NextResponse.json({ title, poem });
+    } catch (e) {
+      console.error(`[write] model=${model} failed: ${e instanceof Error ? e.name : "error"}`);
+      busy = true;
+    } finally {
+      clearTimeout(timer);
     }
-    return NextResponse.json({ title, poem });
-  } catch {
-    return NextResponse.json(
-      { error: "That took too long. Please try again." },
-      { status: 504 },
-    );
-  } finally {
-    clearTimeout(timer);
   }
+
+  return NextResponse.json(
+    {
+      error: busy
+        ? "Sylph's writing well is very busy right now. Please try again in a minute."
+        : "Sylph couldn't reach the words just now. Please try again.",
+    },
+    { status: busy ? 503 : 502 },
+  );
 }
