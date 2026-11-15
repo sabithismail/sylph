@@ -45,7 +45,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ care: true, message: CARE_MESSAGE });
   }
 
-  const key = process.env.GEMINI_API_KEY;
+  const key = process.env.GEMINI_API_KEY || process.env.SYLPH_API_KEY;
   if (!key) {
     return NextResponse.json({ demo: true, ...DEMO_POEM });
   }

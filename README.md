@@ -44,7 +44,7 @@ Open http://localhost:3000.
 Sylph writes poems through Google's Gemini API, which has a free tier.
 
 1. Get a free key at https://aistudio.google.com/apikey
-2. Locally, put it in `.env.local`: `GEMINI_API_KEY=your-key`
+2. Locally, put it in `.env.local`: `GEMINI_API_KEY=your-key` (`SYLPH_API_KEY` also works)
 3. On Vercel, add the same variable under Project Settings → Environment Variables, then redeploy.
 
 Optional: `GEMINI_MODEL` overrides the default model (`gemini-flash-latest`).
