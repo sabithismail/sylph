@@ -1,6 +1,7 @@
 "use client";
 
 import { useId, useState } from "react";
+import Stylist from "./Stylist";
 import { QUOTES } from "@/lib/quotes";
 
 type Tab = "random" | "past";
@@ -173,6 +174,7 @@ export default function QuoteStudio() {
           </div>
         </div>
       )}
+      {shown && (tab === "random" || mine) && <Stylist text={shown} kind="quote" />}
     </div>
   );
 }

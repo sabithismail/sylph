@@ -1,6 +1,7 @@
 "use client";
 
 import { useId, useState } from "react";
+import Stylist from "./Stylist";
 import { GRAMMAR } from "@/lib/poem";
 import { PRESETS, VOICES, WORDS_MAX, WORDS_MIN, type StoryVoice } from "@/lib/story";
 
@@ -264,6 +265,7 @@ export default function StoryWizard() {
             style={{ fontFamily: "var(--font-hand)", fontSize: "1.5rem", lineHeight: 1.5 }}
           />
           <p className="text-sm text-sage">{count} words · Tap the story to change anything. It&apos;s yours now.</p>
+          <Stylist title={result.title} text={result.story} kind="story" />
           {error && (
             <p role="alert" className="rounded-xl border border-stone bg-deep p-4 text-base text-mist">{error}</p>
           )}

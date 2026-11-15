@@ -1,6 +1,7 @@
 "use client";
 
 import { useId, useState } from "react";
+import Stylist from "./Stylist";
 import {
   FORMS,
   GRAMMAR,
@@ -334,6 +335,7 @@ export default function PoemWizard() {
             style={{ fontFamily: "var(--font-hand)", fontSize: "1.65rem", lineHeight: 1.45 }}
           />
           <p className="text-sm text-sage">Tap the poem to change any word. It&apos;s yours now.</p>
+          <Stylist title={result.title} text={result.poem} kind="poem" />
 
           {error && (
             <p role="alert" className="rounded-xl border border-stone bg-deep p-4 text-base text-mist">

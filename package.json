@@ -10,8 +10,13 @@
   },
   "dependencies": {
     "@fontsource/caveat": "^5.3.0",
+    "@fontsource/cormorant-garamond": "^5.3.0",
     "@fontsource/dancing-script": "^5.3.0",
     "@fontsource/dm-sans": "^5.3.0",
+    "@fontsource/great-vibes": "^5.3.0",
+    "@fontsource/im-fell-english": "^5.3.0",
+    "@fontsource/lora": "^5.3.0",
+    "@fontsource/playfair-display": "^5.3.0",
     "next": "^15.5.29",
     "react": "19.1.0",
     "react-dom": "19.1.0"
