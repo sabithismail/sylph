@@ -1,5 +1,7 @@
 import Link from "next/link";
 import Ambient from "./Ambient";
+import Feed from "./Feed";
+import NavAccount from "./NavAccount";
 import SylphIcon from "./SylphIcon";
 import SylphWordmark from "./SylphWordmark";
 
@@ -38,6 +40,7 @@ export default function Home() {
         <header className="flex items-center gap-4">
           <SylphIcon size={36} glow={false} />
           <SylphWordmark className="w-32" />
+          <NavAccount />
         </header>
 
         <section className="sy-home-in flex flex-col gap-4">
@@ -95,6 +98,16 @@ export default function Home() {
               )}
             </article>
           ))}
+        </section>
+
+        <section className="flex flex-col gap-5" aria-labelledby="latest-h">
+          <div className="flex items-baseline justify-between gap-4">
+            <h2 id="latest-h" className="text-3xl text-mist" style={{ fontFamily: "var(--font-script)", fontWeight: 700 }}>
+              Latest from the garden
+            </h2>
+            <Link href="/feed" className="text-sm text-mist underline underline-offset-4">See all</Link>
+          </div>
+          <Feed limit={4} />
         </section>
 
         <footer className="mt-auto pb-4 text-sm text-sage">

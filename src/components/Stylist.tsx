@@ -1,12 +1,9 @@
 "use client";
 
-import "@fontsource/great-vibes/400.css";
-import "@fontsource/playfair-display/400-italic.css";
-import "@fontsource/cormorant-garamond/500-italic.css";
-import "@fontsource/lora/400-italic.css";
-import "@fontsource/im-fell-english/400.css";
 import { toBlob } from "html-to-image";
 import { useEffect, useId, useRef, useState } from "react";
+import StyledCard from "./StyledCard";
+import PostPanel from "./PostPanel";
 import { CONTRASTS, FONTS, TEMPLATES, type Contrast } from "@/lib/styles";
 
 const KEY = "sylph-style";
@@ -52,11 +49,6 @@ export default function Stylist({
     }
   }, [t, f, c]);
 
-  const tpl = TEMPLATES.find((x) => x.id === t) ?? TEMPLATES[0];
-  const font = FONTS.find((x) => x.id === f) ?? FONTS[0];
-  const color = tpl.text[c];
-  const base = kind === "story" ? 1.2 : kind === "quote" ? 1.9 : 1.4;
-  const size = `${(base * font.scale).toFixed(2)}rem`;
 
   const plain = `${title && kind !== "quote" ? title + "\n\n" : ""}${text}`;
   const site = typeof window === "undefined" ? "" : window.location.origin;
@@ -117,45 +109,7 @@ export default function Stylist({
         Dress it up
       </h3>
 
-      <div
-        ref={cardRef}
-        className="flex flex-col gap-4 overflow-hidden rounded-3xl border p-7 sm:p-10"
-        style={{ background: tpl.bg, borderColor: tpl.border, boxShadow: tpl.shadow }}
-      >
-        {title && kind !== "quote" && (
-          <p
-            style={{
-              fontFamily: font.family,
-              fontWeight: font.weight,
-              fontStyle: font.style,
-              fontSize: `${(2 * font.scale).toFixed(2)}rem`,
-              lineHeight: 1.15,
-              color: tpl.accent,
-            }}
-          >
-            {title}
-          </p>
-        )}
-        <p
-          className="whitespace-pre-wrap"
-          style={{
-            fontFamily: font.family,
-            fontWeight: c === "high" ? Math.min(700, font.weight + 100) : font.weight,
-            fontStyle: font.style,
-            fontSize: size,
-            lineHeight: 1.45,
-            color,
-          }}
-        >
-          {text}
-        </p>
-        <p
-          className="mt-2 flex items-center gap-2 text-sm"
-          style={{ color: tpl.text.soft, fontFamily: '"Dancing Script", cursive', fontWeight: 600 }}
-        >
-          <span aria-hidden="true" style={{ color: tpl.accent }}>✦</span> written with Sylph
-        </p>
-      </div>
+      <StyledCard ref={cardRef} title={title} text={text} kind={kind} template={t} font={f} contrast={c} />
 
       <fieldset className="flex flex-col gap-2">
         <legend className="mb-1 text-sm text-mist">Template</legend>
@@ -210,6 +164,7 @@ export default function Stylist({
         </div>
         <p className="text-sm text-sage" role="status" aria-live="polite">{note}</p>
       </div>
+      <PostPanel kind={kind} title={title ?? ""} text={text} template={t} font={f} contrast={c} />
     </section>
   );
 }

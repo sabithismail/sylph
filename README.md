@@ -49,3 +49,7 @@ Sylph writes poems through Google's Gemini API, which has a free tier.
 
 Optional: `GEMINI_MODEL` overrides the default model (`gemini-flash-latest`).
 Without a key the poem page still works and shows a sample poem.
+
+## Accounts and the feed
+
+Login, posts, spirits (followers), likes and reports use Supabase. Set `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_KEY` (the publishable key). Row Level Security keeps instagram/facebook handles private unless a user shares them with accepted spirits.
