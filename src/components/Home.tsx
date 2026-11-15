@@ -22,7 +22,7 @@ const PATHS = [
   },
   {
     title: "Find a quote",
-    href: undefined as string | undefined,
+    href: "/quote",
     body: "Draw a random line from the garden, or turn one hard moment into a line or two with a touch of nature.",
     icon: (
       <path d="M6 22c0-6 2-10 7-12M7 22h5v5H7zM18 22c0-6 2-10 7-12M19 22h5v5h-5z" />
