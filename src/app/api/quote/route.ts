@@ -36,14 +36,32 @@ export async function POST(req: Request) {
   if (!key) return NextResponse.json({ demo: true, quote: DEMO_QUOTE });
 
   const { system, user } = buildQuotePrompts(parsed.req);
-  const out = await generateJson({
+  const words = (t: string) => t.trim().split(/\s+/).filter(Boolean).length;
+  let out = await generateJson({
     key,
     system,
     user,
     properties: { quote: { type: "STRING" } },
     maxOutputTokens: 600,
     perTryMs: 12_000,
+    budgetMs: 26_000,
   });
+  // One retry if the quote came back outside 8-20 words.
+  if (out.ok) {
+    const n = words(String(out.json.quote ?? ""));
+    if (n < 8 || n > 22) {
+      const again = await generateJson({
+        key,
+        system,
+        user: `${user}\n\nIMPORTANT: the quote must be between 8 and 20 words.`,
+        properties: { quote: { type: "STRING" } },
+        maxOutputTokens: 600,
+        perTryMs: 12_000,
+        budgetMs: 24_000,
+      });
+      if (again.ok) out = again;
+    }
+  }
   if (!out.ok) {
     return NextResponse.json(
       {
