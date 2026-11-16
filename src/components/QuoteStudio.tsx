@@ -1,6 +1,7 @@
 "use client";
 
 import { useId, useState } from "react";
+import { authedPost } from "@/lib/api";
 import Stylist from "./Stylist";
 import { QUOTES } from "@/lib/quotes";
 
@@ -49,11 +50,7 @@ export default function QuoteStudio() {
     setError("");
     setCare("");
     try {
-      const res = await fetch("/api/quote", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ past }),
-      });
+      const res = await authedPost("/api/quote", { past });
       const data = await res.json();
       if (data.care) setCare(data.message as string);
       else if (!res.ok) setError(data.error ?? "Something went wrong. Please try again.");

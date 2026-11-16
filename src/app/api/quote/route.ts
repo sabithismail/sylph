@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { checkQuota } from "@/lib/quota";
 import { generateJson } from "@/lib/gemini";
 import { CARE_MESSAGE, DEMO_QUOTE, RISK, buildQuotePrompts, parseQuoteRequest } from "@/lib/quotes";
 
@@ -34,6 +35,9 @@ export async function POST(req: Request) {
 
   const key = process.env.GEMINI_API_KEY || process.env.SYLPH_API_KEY;
   if (!key) return NextResponse.json({ demo: true, quote: DEMO_QUOTE });
+
+  const over = await checkQuota(req, ip);
+  if (over) return NextResponse.json({ error: over }, { status: 429 });
 
   const { system, user } = buildQuotePrompts(parsed.req);
   const words = (t: string) => t.trim().split(/\s+/).filter(Boolean).length;

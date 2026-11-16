@@ -67,6 +67,13 @@ export default function PostPanel({
           </Link>{" "}
           in a new tab to post. Your piece will wait here.
         </p>
+      ) : me.needsSetup ? (
+        <p className="text-base text-mist">
+          <Link href="/login?next=/feed" target="_blank" className="underline underline-offset-4">
+            Finish setting up your account
+          </Link>{" "}
+          in a new tab to post.
+        </p>
       ) : done ? (
         <p className="text-base text-mist" role="status">
           Posted as {me.name}.{" "}

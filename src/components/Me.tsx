@@ -18,6 +18,7 @@ export default function Me() {
   const [vis, setVis] = useState<"private" | "spirits">("private");
   const [msg, setMsg] = useState("");
   const [rows, setRows] = useState<Row[]>([]);
+  const [confirm, setConfirm] = useState("");
   const [names, setNames] = useState<Record<string, string>>({});
 
   const load = useCallback(async () => {
@@ -154,6 +155,30 @@ export default function Me() {
             <button type="button" className={btn} onClick={() => drop(r.requester_id, r.addressee_id)}>Remove</button>
           </div>
         ))}
+      </section>
+
+      <section className="flex flex-col gap-3 border-t border-stone pt-8">
+        <h3 className="text-2xl text-mist" style={{ fontFamily: "var(--font-script)", fontWeight: 700 }}>Delete my account</h3>
+        <p className="text-sm text-mist">This removes your profile, posts, likes and spirits for good. Type <strong>delete</strong> to confirm.</p>
+        <div className="flex flex-wrap gap-3">
+          <label htmlFor={`${uid}-d`} className="sr-only">Type delete to confirm</label>
+          <input id={`${uid}-d`} className={`${field} max-w-48`} value={confirm} onChange={(e) => setConfirm(e.target.value)} />
+          <button
+            type="button"
+            className={btn}
+            disabled={confirm.trim().toLowerCase() !== "delete"}
+            onClick={async () => {
+              const sb = getSupabase();
+              if (!sb) return;
+              const { error } = await sb.rpc("delete_my_account");
+              if (error) return setMsg("Couldn't delete the account. Please try again.");
+              await sb.auth.signOut();
+              window.location.href = "/";
+            }}
+          >
+            Delete forever
+          </button>
+        </div>
       </section>
     </div>
   );

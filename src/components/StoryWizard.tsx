@@ -1,6 +1,7 @@
 "use client";
 
 import { useId, useState } from "react";
+import { authedPost } from "@/lib/api";
 import Stylist from "./Stylist";
 import { GRAMMAR } from "@/lib/poem";
 import { PRESETS, VOICES, WORDS_MAX, WORDS_MIN, type StoryVoice } from "@/lib/story";
@@ -40,11 +41,7 @@ export default function StoryWizard() {
     setError("");
     setCare("");
     try {
-      const res = await fetch("/api/story", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ past, words, grammar, voice, oldEnglish }),
-      });
+      const res = await authedPost("/api/story", { past, words, grammar, voice, oldEnglish });
       const data = await res.json();
       if (data.care) {
         setCare(data.message as string);

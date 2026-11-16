@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Ambient from "./Ambient";
 import Feed from "./Feed";
+import Tilt from "./Tilt";
 import NavAccount from "./NavAccount";
 import SylphIcon from "./SylphIcon";
 import SylphWordmark from "./SylphWordmark";
@@ -63,10 +64,8 @@ export default function Home() {
           style={{ animationDelay: "0.15s" }}
         >
           {PATHS.map((p) => (
-            <article
-              key={p.title}
-              className="flex flex-col gap-4 rounded-2xl border border-stone bg-deep p-6 transition-transform duration-200 ease-out hover:-translate-y-0.5"
-            >
+            <Tilt key={p.title} className="h-full rounded-2xl">
+            <article className="flex h-full flex-col gap-4 rounded-2xl border border-stone bg-deep p-6">
               <svg
                 width="32"
                 height="32"
@@ -97,6 +96,7 @@ export default function Home() {
                 </span>
               )}
             </article>
+            </Tilt>
           ))}
         </section>
 
@@ -111,7 +111,8 @@ export default function Home() {
         </section>
 
         <footer className="mt-auto pb-4 text-sm text-sage">
-          Sylph is being grown one screen at a time.
+          Sylph is being grown one screen at a time.{" "}
+          <Link href="/rules" className="underline underline-offset-4">Rules &amp; privacy</Link>
         </footer>
       </div>
     </div>

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { getSupabase, type PostRow } from "@/lib/supabase";
 import StyledCard from "./StyledCard";
+import Tilt from "./Tilt";
 import type { Me } from "./useAuth";
 
 export type Relation = "none" | "requested" | "incoming" | "spirit";
@@ -91,7 +92,9 @@ export default function PostCard({
 
   return (
     <article className="flex flex-col gap-3">
-      <StyledCard title={post.title} text={post.body} kind={post.kind} template={post.template} font={post.font} contrast={post.contrast} compact />
+      <Tilt className="rounded-3xl" max={5}>
+        <StyledCard title={post.title} text={post.body} kind={post.kind} template={post.template} font={post.font} contrast={post.contrast} compact />
+      </Tilt>
       <div className="flex flex-wrap items-center gap-2">
         <span className="mr-1 text-base text-mist">
           {post.author_name}

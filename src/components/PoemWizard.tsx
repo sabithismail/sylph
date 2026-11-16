@@ -1,6 +1,7 @@
 "use client";
 
 import { useId, useState } from "react";
+import { authedPost } from "@/lib/api";
 import Stylist from "./Stylist";
 import {
   FORMS,
@@ -60,11 +61,7 @@ export default function PoemWizard() {
     setError("");
     setCare("");
     try {
-      const res = await fetch("/api/write", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ story, form, lines, grammar, oldEnglish }),
-      });
+      const res = await authedPost("/api/write", { story, form, lines, grammar, oldEnglish });
       const data = await res.json();
       if (data.care) {
         setCare(data.message as string);

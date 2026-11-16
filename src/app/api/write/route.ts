@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { checkQuota } from "@/lib/quota";
 import {
   CARE_MESSAGE,
   DEMO_POEM,
@@ -49,6 +50,9 @@ export async function POST(req: Request) {
   if (!key) {
     return NextResponse.json({ demo: true, ...DEMO_POEM });
   }
+
+  const over = await checkQuota(req, ip);
+  if (over) return NextResponse.json({ error: over }, { status: 429 });
 
   const { system, user } = buildPrompts(parsed.req);
   const body2 = JSON.stringify({

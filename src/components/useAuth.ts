@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { getSupabase } from "@/lib/supabase";
 
-export type Me = { id: string; name: string } | null;
+export type Me = { id: string; name: string; needsSetup: boolean } | null;
 
 /** Current signed-in user: undefined while loading, null when signed out. */
 export function useAuth(): { me: Me | undefined; configured: boolean } {
@@ -18,8 +18,9 @@ export function useAuth(): { me: Me | undefined; configured: boolean } {
         if (alive) setMe(null);
         return;
       }
-      const { data } = await sb!.from("profiles").select("id,display_name").eq("id", uid).maybeSingle();
-      if (alive) setMe({ id: uid, name: data?.display_name ?? "Spirit" });
+      const { data } = await sb!.rpc("my_profile");
+      const p = Array.isArray(data) ? data[0] : null;
+      if (alive) setMe({ id: uid, name: p?.display_name ?? "Spirit", needsSetup: p ? !p.agreed_13 : false });
     }
     sb.auth.getSession().then(({ data }) => load(data.session?.user.id ?? null));
     const { data: sub } = sb.auth.onAuthStateChange((_e, session) => {

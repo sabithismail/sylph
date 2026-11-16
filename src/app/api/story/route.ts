@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { checkQuota } from "@/lib/quota";
 import { generateJson } from "@/lib/gemini";
 import { CARE_MESSAGE, RISK } from "@/lib/poem";
 import { DEMO_STORY, buildStoryPrompts, parseStoryRequest } from "@/lib/story";
@@ -35,6 +36,9 @@ export async function POST(req: Request) {
 
   const key = process.env.GEMINI_API_KEY || process.env.SYLPH_API_KEY;
   if (!key) return NextResponse.json({ demo: true, ...DEMO_STORY });
+
+  const over = await checkQuota(req, ip);
+  if (over) return NextResponse.json({ error: over }, { status: 429 });
 
   const { system, user } = buildStoryPrompts(parsed.req);
   const out = await generateJson({
