@@ -110,9 +110,14 @@ export default function Home() {
           <Feed limit={4} />
         </section>
 
-        <footer className="mt-auto pb-4 text-sm text-sage">
-          Sylph is being grown one screen at a time.{" "}
-          <Link href="/rules" className="underline underline-offset-4">Rules &amp; privacy</Link>
+        <footer className="mt-auto flex flex-col gap-2 pb-6 text-sm leading-relaxed text-sage">
+          <p style={{ fontFamily: "var(--font-hand)", fontSize: "1.25rem" }}>
+            Grown with care by a student, for anyone carrying something heavy.
+          </p>
+          <p>
+            If it ever feels too heavy, Tele-MANAS (India) is free at 14416, any time.{" "}
+            <Link href="/rules" className="underline underline-offset-4">Rules &amp; privacy</Link>
+          </p>
         </footer>
       </div>
     </div>
