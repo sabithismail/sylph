@@ -116,6 +116,7 @@ export default function Home() {
           </p>
           <p>
             If it ever feels too heavy, Tele-MANAS (India) is free at 14416, any time.{" "}
+            <Link href="/about" className="underline underline-offset-4">About</Link>{" · "}
             <Link href="/rules" className="underline underline-offset-4">Rules &amp; privacy</Link>
           </p>
         </footer>
