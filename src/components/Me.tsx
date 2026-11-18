@@ -4,7 +4,7 @@ import { useCallback, useEffect, useId, useState } from "react";
 import { getSupabase } from "@/lib/supabase";
 import { useAuth } from "./useAuth";
 import Avatar from "./Avatar";
-import { PALETTES, PALETTE_IDS, SHAPES, SHAPE_NAMES, parseAvatar } from "@/lib/avatars";
+import { AVATARS, parseAvatar } from "@/lib/avatars";
 import { CARE_MESSAGE } from "@/lib/poem";
 
 type Row = { requester_id: string; addressee_id: string; status: "pending" | "accepted" };
@@ -22,8 +22,7 @@ export default function Me() {
   const [msg, setMsg] = useState("");
   const [rows, setRows] = useState<Row[]>([]);
   const [confirm, setConfirm] = useState("");
-  const [shape, setShape] = useState<(typeof SHAPES)[number]>("moon");
-  const [pal, setPal] = useState<keyof typeof PALETTES>("moss");
+  const [pic, setPic] = useState<string>(AVATARS[0]);
   const [bio, setBio] = useState("");
   const [pmsg, setPmsg] = useState("");
   const [names, setNames] = useState<Record<string, string>>({});
@@ -39,9 +38,7 @@ export default function Me() {
       setVis(mine.handle_visibility ?? "private");
     }
     const { data: prof } = await sb.from("profiles").select("avatar,bio").eq("id", me.id).maybeSingle();
-    const a = parseAvatar(prof?.avatar, me.name);
-    setShape(a.shape);
-    setPal(a.palette);
+    setPic(parseAvatar(prof?.avatar, me.name));
     setBio(prof?.bio ?? "");
     const { data: s } = await sb.from("spirits").select("requester_id,addressee_id,status");
     const list = (s ?? []) as Row[];
@@ -75,7 +72,7 @@ export default function Me() {
     e.preventDefault();
     const sb = getSupabase();
     if (!sb || !me) return;
-    const { error } = await sb.from("profiles").update({ avatar: `${shape}:${pal}`, bio: bio.trim() }).eq("id", me.id);
+    const { error } = await sb.from("profiles").update({ avatar: pic, bio: bio.trim() }).eq("id", me.id);
     setPmsg(error ? (error.message.includes("care_needed") ? CARE_MESSAGE : "Couldn't save. Please try again.") : "Saved.");
   }
 
@@ -125,24 +122,16 @@ export default function Me() {
       <form onSubmit={saveProfile} className="flex flex-col gap-4">
         <h3 className="text-2xl text-mist" style={{ fontFamily: "var(--font-script)", fontWeight: 700 }}>Your look</h3>
         <div className="flex items-center gap-4">
-          <Avatar id={`${shape}:${pal}`} name={me.name} size={88} label="Your avatar preview" />
-          <p className="text-sm text-mist">Pick a shape and a colour. This is how spirits see you.</p>
+          <Avatar id={pic} size={88} label="Your picture preview" />
+          <p className="text-sm text-mist">Pick your picture. This is how spirits see you.</p>
         </div>
         <fieldset className="flex flex-wrap gap-2">
-          <legend className="sr-only">Shape</legend>
-          {SHAPES.map((x) => (
-            <button key={x} type="button" aria-pressed={shape === x} aria-label={SHAPE_NAMES[x]} onClick={() => setShape(x)}
-              className={`rounded-full border p-1 ${shape === x ? "border-glow" : "border-stone"}`}>
-              <Avatar id={`${x}:${pal}`} size={44} />
+          <legend className="sr-only">Profile picture</legend>
+          {AVATARS.map((x) => (
+            <button key={x} type="button" aria-pressed={pic === x} aria-label={x} onClick={() => setPic(x)}
+              className={`rounded-full border-2 p-0.5 ${pic === x ? "border-glow" : "border-stone"}`}>
+              <Avatar id={x} size={48} />
             </button>
-          ))}
-        </fieldset>
-        <fieldset className="flex flex-wrap gap-2">
-          <legend className="sr-only">Colour</legend>
-          {PALETTE_IDS.map((x) => (
-            <button key={x} type="button" aria-pressed={pal === x} aria-label={PALETTES[x].name} onClick={() => setPal(x)}
-              className={`size-9 rounded-full border-2 ${pal === x ? "border-glow" : "border-stone"}`}
-              style={{ background: `linear-gradient(135deg, ${PALETTES[x].bg[0]}, ${PALETTES[x].bg[1]})` }} />
           ))}
         </fieldset>
         <label htmlFor={`${uid}-bio`} className="text-sm text-mist">Short bio (optional)</label>
