@@ -4,7 +4,7 @@ import { useCallback, useEffect, useId, useState } from "react";
 import { getSupabase } from "@/lib/supabase";
 import { useAuth } from "./useAuth";
 import Avatar from "./Avatar";
-import { AVATARS, parseAvatar } from "@/lib/avatars";
+import { AVATARS, CREATOR_AVATAR, CREATOR_ID, parseAvatar } from "@/lib/avatars";
 import { CARE_MESSAGE } from "@/lib/poem";
 
 type Row = { requester_id: string; addressee_id: string; status: "pending" | "accepted" };
@@ -127,7 +127,7 @@ export default function Me() {
         </div>
         <fieldset className="flex flex-wrap gap-2">
           <legend className="sr-only">Profile picture</legend>
-          {AVATARS.map((x) => (
+          {(me?.id === CREATOR_ID ? [CREATOR_AVATAR, ...AVATARS] : AVATARS).map((x) => (
             <button key={x} type="button" aria-pressed={pic === x} aria-label={x} onClick={() => setPic(x)}
               className={`rounded-full border-2 p-0.5 ${pic === x ? "border-glow" : "border-stone"}`}>
               <Avatar id={x} size={48} />

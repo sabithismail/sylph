@@ -13,16 +13,18 @@ export default function Avatar({
   size?: number;
   label?: string;
 }) {
+  const creator = id === "creator";
   return (
     <img
       src={`/avatars/${parseAvatar(id, name)}.webp`}
       width={size}
       height={size}
       alt={label ?? ""}
+      title={creator ? "Creator of Sylph" : undefined}
       aria-hidden={label ? undefined : true}
       loading="lazy"
       className="shrink-0 rounded-full object-cover"
-      style={{ width: size, height: size }}
+      style={{ width: size, height: size, ...(creator ? { boxShadow: "0 0 0 2px #e6eda0, 0 0 14px 2px rgba(230,237,160,.45)" } : null) }}
     />
   );
 }
