@@ -172,7 +172,7 @@ export default function Me() {
         {incoming.length === 0 && <p className="text-base text-sage">No new requests.</p>}
         {incoming.map((r) => (
           <div key={r.requester_id} className="flex flex-wrap items-center gap-3">
-            <span className="text-base text-mist">{nm(r.requester_id)}</span>
+            <a href={`/spirit/${encodeURIComponent(nm(r.requester_id))}`} className="text-base text-mist underline underline-offset-4">{nm(r.requester_id)}</a>
             <button type="button" className={btn} onClick={() => accept(r.requester_id)}>Accept</button>
             <button type="button" className={btn} onClick={() => drop(r.requester_id, me.id)}>Decline</button>
           </div>
@@ -185,7 +185,7 @@ export default function Me() {
         {mine.length === 0 && <p className="text-base text-sage">No spirits yet.</p>}
         {mine.map((r) => (
           <div key={r.requester_id + r.addressee_id} className="flex flex-wrap items-center gap-3">
-            <span className="text-base text-mist">{nm(other(r))}</span>
+            <a href={`/spirit/${encodeURIComponent(nm(other(r)))}`} className="text-base text-mist underline underline-offset-4">{nm(other(r))}</a>
             <button type="button" className={btn} onClick={() => drop(r.requester_id, r.addressee_id)}>Remove</button>
           </div>
         ))}

@@ -14,6 +14,9 @@ export default function SpiritProfile({ name }: { name: string }) {
   const { me, configured } = useAuth();
   const [prof, setProf] = useState<Prof | null | undefined>(undefined);
   const [posts, setPosts] = useState<PostRow[]>([]);
+  const [rel, setRel] = useState<"none" | "requested" | "incoming" | "spirit">("none");
+  const [handle, setHandle] = useState<{ platform: string; handle: string } | null>(null);
+  const [note, setNote] = useState("");
 
   useEffect(() => {
     const sb = getSupabase();
@@ -27,11 +30,18 @@ export default function SpiritProfile({ name }: { name: string }) {
       setProf(data as Prof);
       const { data: ps } = await sb.from("posts").select(POST_COLUMNS).eq("author_id", data.id).order("created_at", { ascending: false }).limit(30);
       if (alive) setPosts((ps ?? []) as PostRow[]);
+      if (me && me.id !== data.id) {
+        const { data: sp } = await sb.from("spirits").select("requester_id,addressee_id,status");
+        const row = (sp ?? []).find(
+          (x) => (x.requester_id === me.id && x.addressee_id === data.id) || (x.addressee_id === me.id && x.requester_id === data.id),
+        );
+        if (alive) setRel(!row ? "none" : row.status === "accepted" ? "spirit" : row.requester_id === me.id ? "requested" : "incoming");
+      }
     })();
     return () => {
       alive = false;
     };
-  }, [name]);
+  }, [name, me]);
 
   if (!configured) return <p className="text-base text-mist">Profiles aren&apos;t connected on this site yet.</p>;
   if (prof === undefined) return <Loader size={52} phrases={["Finding this spirit…"]} />;
@@ -43,6 +53,26 @@ export default function SpiritProfile({ name }: { name: string }) {
     );
   }
 
+  async function request() {
+    const sb = getSupabase();
+    if (!sb || !me || !prof) return setNote("Sign in to become a spirit.");
+    const { error } = await sb.from("spirits").insert({ requester_id: me.id, addressee_id: prof.id });
+    if (error && error.code !== "23505") return setNote("Couldn't send the request.");
+    setRel("requested");
+    setNote("Request sent. They'll see it in their spirits.");
+  }
+
+  async function showHandle() {
+    const sb = getSupabase();
+    if (!sb || !prof) return;
+    const { data } = await sb.rpc("get_handle", { target: prof.id });
+    const row = Array.isArray(data) ? data[0] : null;
+    if (row) setHandle({ platform: row.platform, handle: row.handle });
+    else setNote("They haven't shared a handle with their spirits.");
+  }
+
+  const isMe = me?.id === prof.id;
+
   return (
     <div className="flex flex-col gap-8">
       <div className="flex items-center gap-5">
@@ -51,18 +81,42 @@ export default function SpiritProfile({ name }: { name: string }) {
           <h1 className="text-4xl text-mist sm:text-5xl" style={{ fontFamily: "var(--font-script)", fontWeight: 700 }}>
             {prof.display_name}
           </h1>
-          {me?.id === prof.id && (
-            <Link href="/me" className="text-sm text-mist underline underline-offset-4">Edit my garden</Link>
-          )}
+          {isMe && <Link href="/me" className="text-sm text-mist underline underline-offset-4">Edit my garden</Link>}
         </div>
       </div>
+      {!isMe && (
+        <div className="flex flex-wrap items-center gap-3">
+          {rel === "none" && (
+            <button type="button" onClick={request} className="rounded-full bg-moss px-5 py-2.5 text-sm font-semibold text-[#f1f3e8] transition-transform duration-150 ease-out hover:-translate-y-0.5 active:scale-[0.97]">
+              Become a spirit
+            </button>
+          )}
+          {rel === "requested" && <span className="text-sm text-sage">Request sent</span>}
+          {rel === "incoming" && <Link href="/me" className="rounded-full border border-stone px-4 py-2 text-sm text-mist">Wants to be your spirit</Link>}
+          {rel === "spirit" && (
+            <button type="button" onClick={showHandle} className="rounded-full border border-stone px-4 py-2 text-sm text-mist">Spirit ✦ Find them</button>
+          )}
+          {handle && (
+            <a href={`https://${handle.platform === "instagram" ? "instagram.com" : "facebook.com"}/${handle.handle}`} target="_blank" rel="noopener noreferrer" className="text-base text-mist underline underline-offset-4">
+              {handle.platform === "instagram" ? "Instagram" : "Facebook"}: {handle.handle}
+            </a>
+          )}
+          {note && <span role="status" className="text-sm text-sage">{note}</span>}
+        </div>
+      )}
       {prof.bio && (
         <p className="text-2xl leading-snug text-mist" style={{ fontFamily: "var(--font-hand)", fontWeight: 500 }}>
           {prof.bio}
         </p>
       )}
       {posts.length === 0 ? (
-        <p className="text-base text-sage">Nothing to show yet.</p>
+        <p className="rounded-2xl border border-stone bg-deep p-5 text-xl text-mist" style={{ fontFamily: "var(--font-hand)" }}>
+          {isMe
+            ? "You haven't posted anything yet."
+            : rel === "spirit"
+              ? "Nothing new here yet."
+              : "This spirit's words are shared only with their spirits. Become one to read them."}
+        </p>
       ) : (
         <div className="grid gap-8 sm:grid-cols-2">
           {posts.map((p) => (
