@@ -3,6 +3,7 @@
 import { useId, useState } from "react";
 import { authedPost } from "@/lib/api";
 import Stylist from "./Stylist";
+import Loader from "./Loader";
 import { GRAMMAR } from "@/lib/poem";
 import { PRESETS, VOICES, WORDS_MAX, WORDS_MIN, type StoryVoice } from "@/lib/story";
 
@@ -224,9 +225,9 @@ export default function StoryWizard() {
             </span>
           </label>
 
-          <p className="text-sm text-sage" role="status" aria-live="polite">
-            {loading ? "Sylph is listening and writing. Longer stories take up to a minute…" : ""}
-          </p>
+          {loading && (
+            <Loader phrases={["Sylph is listening…", "Walking back through the memory…", "Finding where the light gets in…", "Shaping the story. Longer ones take up to a minute…"]} />
+          )}
           {error && (
             <p role="alert" className="rounded-xl border border-stone bg-deep p-4 text-base text-mist">{error}</p>
           )}
@@ -266,6 +267,7 @@ export default function StoryWizard() {
           {error && (
             <p role="alert" className="rounded-xl border border-stone bg-deep p-4 text-base text-mist">{error}</p>
           )}
+          {loading && <Loader phrases={["Writing another version…", "Finding a different light…"]} />}
           <div className="flex flex-wrap gap-3">
             <button type="button" className={btnPrimary} onClick={copy}>{copied ? "Copied" : "Copy story"}</button>
             <button type="button" className={btnGhost} onClick={write} disabled={loading}>

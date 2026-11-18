@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import { POST_COLUMNS, getSupabase, type PostRow } from "@/lib/supabase";
+import Loader from "./Loader";
 import PostCard, { type Relation } from "./PostCard";
 import { useAuth } from "./useAuth";
 
@@ -47,7 +48,7 @@ export default function Feed({ limit = 30 }: { limit?: number }) {
 
   if (!configured) return null;
   if (failed) return <p className="text-base text-mist">The garden is quiet right now. Please try again soon.</p>;
-  if (posts === null) return <p className="text-base text-sage" role="status">Gathering poems…</p>;
+  if (posts === null) return <Loader size={52} phrases={["Gathering poems…", "Walking the garden paths…"]} />;
   if (posts.length === 0) {
     return (
       <p className="text-xl text-mist" style={{ fontFamily: "var(--font-hand)" }}>

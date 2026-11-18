@@ -3,6 +3,7 @@
 import { useId, useState } from "react";
 import { authedPost } from "@/lib/api";
 import Stylist from "./Stylist";
+import Loader from "./Loader";
 import {
   FORMS,
   GRAMMAR,
@@ -288,9 +289,7 @@ export default function PoemWizard() {
             </span>
           </label>
 
-          <p className="text-sm text-sage" role="status" aria-live="polite">
-            {loading ? "Sylph is listening and writing…" : ""}
-          </p>
+          {loading && <Loader phrases={["Sylph is listening…", "Gathering the words…", "Finding the right image…", "Tending the lines…"]} />}
           {error && (
             <p role="alert" className="rounded-xl border border-stone bg-deep p-4 text-base text-mist">
               {error}
@@ -340,6 +339,7 @@ export default function PoemWizard() {
             </p>
           )}
 
+          {loading && <Loader phrases={["Writing another version…", "Finding a different light…"]} />}
           <div className="flex flex-wrap gap-3">
             <button type="button" className={btnPrimary} onClick={copy}>
               {copied ? "Copied" : "Copy poem"}

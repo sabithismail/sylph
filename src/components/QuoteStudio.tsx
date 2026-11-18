@@ -3,6 +3,7 @@
 import { useId, useState } from "react";
 import { authedPost } from "@/lib/api";
 import Stylist from "./Stylist";
+import Loader from "./Loader";
 import { QUOTES } from "@/lib/quotes";
 
 type Tab = "random" | "past";
@@ -112,10 +113,9 @@ export default function QuoteStudio() {
             className="w-full resize-y rounded-2xl border border-stone bg-night p-4 leading-relaxed text-mist placeholder:text-sage"
             style={{ fontFamily: "var(--font-hand)", fontSize: "1.4rem" }}
           />
+          {loading && <Loader size={52} phrases={["Sylph is listening…", "Looking for the right image…", "Folding it into a line…"]} />}
           <div className="flex items-center justify-between gap-3">
-            <p className="text-sm text-sage" role="status" aria-live="polite">
-              {loading ? "Sylph is listening…" : `${past.trim().length}/1200`}
-            </p>
+            <p className="text-sm text-sage">{past.trim().length}/1200</p>
             <button type="button" className={btnPrimary} disabled={loading || past.trim().length < 10} onClick={write}>
               {loading ? "Writing…" : mine ? "Write another" : "Write my quote"}
             </button>
