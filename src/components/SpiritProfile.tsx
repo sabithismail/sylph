@@ -4,6 +4,8 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { POST_COLUMNS, getSupabase, type PostRow } from "@/lib/supabase";
 import Avatar from "./Avatar";
+import OwnerMark from "./OwnerMark";
+import { CREATOR_ID } from "@/lib/avatars";
 import Loader from "./Loader";
 import PostCard from "./PostCard";
 import { useAuth } from "./useAuth";
@@ -81,6 +83,7 @@ export default function SpiritProfile({ name }: { name: string }) {
           <h1 className="text-4xl text-mist sm:text-5xl" style={{ fontFamily: "var(--font-script)", fontWeight: 700 }}>
             {prof.display_name}
           </h1>
+          {prof.id === CREATOR_ID && <OwnerMark size={22} label />}
           {isMe && <Link href="/me" className="text-sm text-mist underline underline-offset-4">Edit my garden</Link>}
         </div>
       </div>

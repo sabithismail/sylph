@@ -388,3 +388,11 @@ body {
     animation: none;
   }
 }
+
+/* Creator mark: a soft pulse, still when motion is reduced */
+.sy-owner { filter: drop-shadow(0 0 4px rgba(230, 237, 160, 0.75)); animation: sy-owner-glow 3.2s ease-in-out infinite; }
+@keyframes sy-owner-glow {
+  0%, 100% { filter: drop-shadow(0 0 3px rgba(230, 237, 160, 0.55)); }
+  50% { filter: drop-shadow(0 0 8px rgba(230, 237, 160, 0.95)); }
+}
+@media (prefers-reduced-motion: reduce) { .sy-owner { animation: none; } }

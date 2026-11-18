@@ -6,6 +6,8 @@ import { getSupabase, type PostRow } from "@/lib/supabase";
 import StyledCard from "./StyledCard";
 import Tilt from "./Tilt";
 import Avatar from "./Avatar";
+import OwnerMark from "./OwnerMark";
+import { CREATOR_ID } from "@/lib/avatars";
 import type { Me } from "./useAuth";
 
 export type Relation = "none" | "requested" | "incoming" | "spirit";
@@ -143,9 +145,10 @@ export default function PostCard({
         </button>
       )}
       <div className="flex flex-wrap items-center gap-x-2 gap-y-1.5">
-        <Link href={`/spirit/${encodeURIComponent(post.author_name)}`} className="mr-1 flex max-w-[9rem] items-center gap-2 text-base text-mist">
+        <Link href={`/spirit/${encodeURIComponent(post.author_name)}`} className="mr-1 flex max-w-[11rem] items-center gap-2 text-base text-mist">
           <Avatar id={author?.avatar} name={post.author_name} size={28} />
           <span className="truncate">{post.author_name}</span>
+          {post.author_id === CREATOR_ID && <OwnerMark size={16} />}
           {post.visibility === "spirits" && <span className="ml-1 shrink-0 text-xs text-sage">spirits</span>}
         </Link>
         <button type="button" className={act} onClick={like} aria-pressed={isLiked}>
