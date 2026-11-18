@@ -7,6 +7,7 @@ import Loader from "./Loader";
 import PostCard, { type Relation } from "./PostCard";
 import { useAuth } from "./useAuth";
 
+type Author = { avatar: string | null; bio: string };
 type SpiritRow = { requester_id: string; addressee_id: string; status: "pending" | "accepted" };
 
 export default function Feed({ limit = 30 }: { limit?: number }) {
@@ -15,6 +16,7 @@ export default function Feed({ limit = 30 }: { limit?: number }) {
   const [likes, setLikes] = useState<Set<string>>(new Set());
   const [spirits, setSpirits] = useState<SpiritRow[]>([]);
   const [failed, setFailed] = useState(false);
+  const [authors, setAuthors] = useState<Record<string, Author>>({});
 
   const load = useCallback(async () => {
     const sb = getSupabase();
@@ -22,6 +24,11 @@ export default function Feed({ limit = 30 }: { limit?: number }) {
     const { data, error } = await sb.from("posts").select(POST_COLUMNS).order("created_at", { ascending: false }).limit(limit);
     if (error) return setFailed(true);
     setPosts(data as PostRow[]);
+    const ids = [...new Set((data as PostRow[]).map((x) => x.author_id))];
+    if (ids.length) {
+      const { data: ps } = await sb.from("profiles").select("id,avatar,bio").in("id", ids);
+      setAuthors(Object.fromEntries((ps ?? []).map((r) => [r.id as string, { avatar: r.avatar as string | null, bio: (r.bio as string) ?? "" }])));
+    }
     if (me) {
       const [l, s] = await Promise.all([
         sb.from("likes").select("post_id").eq("user_id", me.id),
@@ -59,7 +66,7 @@ export default function Feed({ limit = 30 }: { limit?: number }) {
   return (
     <div className="grid gap-8 sm:grid-cols-2">
       {posts.map((p) => (
-        <PostCard key={p.id} post={p} me={me} liked={likes.has(p.id)} relation={relation(p.author_id)} onChange={load} />
+        <PostCard key={p.id} post={p} me={me} liked={likes.has(p.id)} relation={relation(p.author_id)} author={authors[p.author_id]} onChange={load} />
       ))}
     </div>
   );

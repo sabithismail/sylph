@@ -5,6 +5,7 @@ import { useState } from "react";
 import { getSupabase, type PostRow } from "@/lib/supabase";
 import StyledCard from "./StyledCard";
 import Tilt from "./Tilt";
+import Avatar from "./Avatar";
 import type { Me } from "./useAuth";
 
 export type Relation = "none" | "requested" | "incoming" | "spirit";
@@ -17,12 +18,14 @@ export default function PostCard({
   me,
   liked,
   relation,
+  author,
   onChange,
 }: {
   post: PostRow;
   me: Me | undefined;
   liked: boolean;
   relation: Relation;
+  author?: { avatar: string | null; bio: string };
   onChange: () => void;
 }) {
   const [likes, setLikes] = useState(post.like_count);
@@ -96,10 +99,11 @@ export default function PostCard({
         <StyledCard title={post.title} text={post.body} kind={post.kind} template={post.template} font={post.font} contrast={post.contrast} compact />
       </Tilt>
       <div className="flex flex-wrap items-center gap-2">
-        <span className="mr-1 text-base text-mist">
+        <Link href={`/spirit/${encodeURIComponent(post.author_name)}`} className="mr-1 flex items-center gap-2 text-base text-mist">
+          <Avatar id={author?.avatar} name={post.author_name} size={32} />
           {post.author_name}
-          {post.visibility === "spirits" && <span className="ml-2 text-sm text-sage">spirits only</span>}
-        </span>
+          {post.visibility === "spirits" && <span className="ml-1 text-sm text-sage">spirits only</span>}
+        </Link>
         <button type="button" className={act} onClick={like} aria-pressed={isLiked}>
           {isLiked ? "♥" : "♡"} {likes}
         </button>
