@@ -4,6 +4,8 @@ import Link from "next/link";
 import { useEffect, useId, useState } from "react";
 import { getSupabase } from "@/lib/supabase";
 import { useAuth } from "./useAuth";
+import AvatarPicker from "./AvatarPicker";
+import { CARE_MESSAGE } from "@/lib/poem";
 
 const field =
   "w-full rounded-xl border border-stone bg-night px-4 py-3 text-base text-mist placeholder:text-sage";
@@ -27,6 +29,8 @@ export default function AuthForm() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [info, setInfo] = useState("");
+  const [pic, setPic] = useState("");
+  const [bio, setBio] = useState("");
 
   useEffect(() => {
     if (me && !me.needsSetup) {
@@ -79,6 +83,17 @@ export default function AuthForm() {
     setError("");
     if (!age) return setError("Please confirm that you are 13 or older.");
     setBusy(true);
+    if (me && (pic || bio.trim())) {
+      const patch: { avatar?: string; bio?: string } = {};
+      if (pic) patch.avatar = pic;
+      if (bio.trim()) patch.bio = bio.trim();
+      const { error: perr } = await sb.from("profiles").update(patch).eq("id", me.id);
+      if (perr) {
+        setBusy(false);
+        setError(perr.message.includes("care_needed") ? CARE_MESSAGE : "Couldn't save your picture or bio. Please try again.");
+        return;
+      }
+    }
     const { error: err } = await sb.rpc("complete_signup", { new_name: name.trim() || me?.name || "" });
     setBusy(false);
     if (err) {
@@ -103,11 +118,20 @@ export default function AuthForm() {
     return (
       <form onSubmit={finishSetup} className="flex flex-col gap-5" noValidate>
         <p className="text-xl text-mist" style={{ fontFamily: "var(--font-hand)" }}>
-          One last step. Pick the name spirits will see on your posts.
+          One last step. Choose how spirits will see you.
         </p>
         <div className="flex flex-col gap-2">
           <label htmlFor={`${uid}-sn`} className="text-sm text-mist">Display name</label>
           <input id={`${uid}-sn`} className={field} value={name} onChange={(e) => setName(e.target.value)} placeholder={me.name} maxLength={26} />
+        </div>
+        <div className="flex flex-col gap-2">
+          <p className="text-sm text-mist">Picture <span className="text-sage">(optional, we&apos;ll pick one if you skip)</span></p>
+          <AvatarPicker value={pic} onChange={setPic} userId={me.id} />
+        </div>
+        <div className="flex flex-col gap-2">
+          <label htmlFor={`${uid}-sb`} className="text-sm text-mist">Short bio <span className="text-sage">(optional)</span></label>
+          <textarea id={`${uid}-sb`} className={field} rows={3} maxLength={160} value={bio} onChange={(e) => setBio(e.target.value)} placeholder="Writes to the moon. Collects rain sounds." />
+          <p className="text-sm text-sage">{bio.length}/160. You can change both later in My garden.</p>
         </div>
         <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-stone bg-deep p-4">
           <input type="checkbox" checked={age} onChange={(e) => setAge(e.target.checked)} className="mt-1 size-5 accent-[#e6eda0]" />

@@ -4,7 +4,8 @@ import { useCallback, useEffect, useId, useState } from "react";
 import { getSupabase } from "@/lib/supabase";
 import { useAuth } from "./useAuth";
 import Avatar from "./Avatar";
-import { AVATARS, CREATOR_AVATAR, CREATOR_ID, parseAvatar } from "@/lib/avatars";
+import AvatarPicker from "./AvatarPicker";
+import { AVATARS, parseAvatar } from "@/lib/avatars";
 import { CARE_MESSAGE } from "@/lib/poem";
 
 type Row = { requester_id: string; addressee_id: string; status: "pending" | "accepted" };
@@ -125,15 +126,7 @@ export default function Me() {
           <Avatar id={pic} size={88} label="Your picture preview" />
           <p className="text-sm text-mist">Pick your picture. This is how spirits see you.</p>
         </div>
-        <fieldset className="flex flex-wrap gap-2">
-          <legend className="sr-only">Profile picture</legend>
-          {(me?.id === CREATOR_ID ? [CREATOR_AVATAR, ...AVATARS] : AVATARS).map((x) => (
-            <button key={x} type="button" aria-pressed={pic === x} aria-label={x} onClick={() => setPic(x)}
-              className={`rounded-full border-2 p-0.5 ${pic === x ? "border-glow" : "border-stone"}`}>
-              <Avatar id={x} size={48} />
-            </button>
-          ))}
-        </fieldset>
+        <AvatarPicker value={pic} onChange={setPic} userId={me.id} />
         <label htmlFor={`${uid}-bio`} className="text-sm text-mist">Short bio (optional)</label>
         <textarea id={`${uid}-bio`} className={field} rows={3} maxLength={160} value={bio} onChange={(e) => setBio(e.target.value)} placeholder="Writes to the moon. Collects rain sounds." />
         <p className="text-sm text-sage">{bio.length}/160. Everyone can see your avatar and bio.</p>

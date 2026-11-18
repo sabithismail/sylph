@@ -37,7 +37,7 @@ export default function StyledCard({
   return (
     <div
       ref={ref}
-      className={`flex flex-col gap-4 overflow-hidden rounded-3xl border ${compact ? "p-6" : "p-7 sm:p-10"}`}
+      className={`flex flex-col gap-4 overflow-hidden rounded-3xl border ${compact ? "p-5" : "p-7 sm:p-10"}`}
       style={{ background: tpl.bg, borderColor: tpl.border, boxShadow: tpl.shadow }}
     >
       {title && kind !== "quote" && (

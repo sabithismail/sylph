@@ -64,7 +64,7 @@ export default function Feed({ limit = 30 }: { limit?: number }) {
     );
   }
   return (
-    <div className="grid gap-8 sm:grid-cols-2">
+    <div className="grid gap-6 sm:grid-cols-2 sm:gap-8">
       {posts.map((p) => (
         <PostCard key={p.id} post={p} me={me} liked={likes.has(p.id)} relation={relation(p.author_id)} author={authors[p.author_id]} onChange={load} />
       ))}
