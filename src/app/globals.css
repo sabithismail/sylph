@@ -396,3 +396,20 @@ body {
   50% { filter: drop-shadow(0 0 8px rgba(230, 237, 160, 0.95)); }
 }
 @media (prefers-reduced-motion: reduce) { .sy-owner { animation: none; } }
+
+/* Garden cat guide */
+.sy-cat { transition: transform 1000ms cubic-bezier(0.45, 0.05, 0.25, 1); }
+.sy-cat img { filter: drop-shadow(0 6px 8px rgba(0, 0, 0, 0.5)); transform-origin: 50% 100%; }
+.sy-cat-idle { animation: sy-cat-breathe 3.8s ease-in-out infinite; }
+.sy-cat-walk { animation: sy-cat-waddle 0.36s ease-in-out infinite; }
+@keyframes sy-cat-breathe { 0%, 100% { transform: scale(1, 1); } 50% { transform: scale(1.015, 1.03); } }
+@keyframes sy-cat-waddle {
+  0%, 100% { transform: translateY(0) rotate(-5deg) scale(1.03, 0.97); }
+  50% { transform: translateY(-9px) rotate(5deg) scale(0.98, 1.03); }
+}
+.sy-bubble { animation: sy-bubble-in 0.28s cubic-bezier(0.2, 0.9, 0.3, 1.2) both; }
+@keyframes sy-bubble-in { from { opacity: 0; transform: translateY(6px) scale(0.96); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) {
+  .sy-cat { transition-duration: 1ms; }
+  .sy-cat-idle, .sy-cat-walk, .sy-bubble { animation: none; }
+}

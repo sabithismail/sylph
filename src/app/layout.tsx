@@ -7,6 +7,7 @@ import "@fontsource/dm-sans/400.css";
 import "@fontsource/dm-sans/500.css";
 import "@fontsource/dm-sans/600.css";
 import "./globals.css";
+import CatGuide from "@/components/CatGuide";
 
 export const metadata: Metadata = {
   title: "Sylph",
@@ -24,7 +25,10 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        {children}
+        <CatGuide />
+      </body>
     </html>
   );
 }

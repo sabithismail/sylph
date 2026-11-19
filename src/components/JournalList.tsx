@@ -65,7 +65,7 @@ export default function JournalList({ me }: { me: NonNullable<Me> }) {
   }
 
   return (
-    <section className="flex flex-col gap-3" aria-labelledby="journal-h">
+    <section data-tour="journal" className="flex flex-col gap-3" aria-labelledby="journal-h">
       <h3 id="journal-h" className="text-2xl text-mist" style={{ fontFamily: "var(--font-script)", fontWeight: 700 }}>
         My journal
       </h3>

@@ -31,7 +31,9 @@ export default function StoryPage() {
             Home
           </Link>
         </header>
-        <StoryWizard />
+        <div data-tour="wizard">
+          <StoryWizard />
+        </div>
       </div>
     </div>
   );

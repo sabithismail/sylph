@@ -124,7 +124,7 @@ export default function Me() {
 
       <GardenPlant />
 
-      <form onSubmit={saveProfile} className="flex flex-col gap-4">
+      <form data-tour="look" onSubmit={saveProfile} className="flex flex-col gap-4">
         <h3 className="text-2xl text-mist" style={{ fontFamily: "var(--font-script)", fontWeight: 700 }}>Your look</h3>
         <div className="flex items-center gap-4">
           <Avatar id={pic} size={88} label="Your picture preview" />
@@ -140,7 +140,7 @@ export default function Me() {
         </div>
       </form>
 
-      <form onSubmit={save} className="flex flex-col gap-4">
+      <form data-tour="handle" onSubmit={save} className="flex flex-col gap-4">
         <h3 className="text-2xl text-mist" style={{ fontFamily: "var(--font-script)", fontWeight: 700 }}>Where spirits can find you</h3>
         <p className="text-sm text-mist">Add an Instagram or Facebook handle if you want to be found. Nobody sees it unless you choose to share it, and then only your spirits do.</p>
         <div className="flex gap-2">

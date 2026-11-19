@@ -31,7 +31,9 @@ export default function QuotePage() {
             Home
           </Link>
         </header>
-        <QuoteStudio />
+        <div data-tour="wizard">
+          <QuoteStudio />
+        </div>
       </div>
     </div>
   );

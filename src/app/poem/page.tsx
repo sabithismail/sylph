@@ -31,7 +31,9 @@ export default function PoemPage() {
             Home
           </Link>
         </header>
-        <PoemWizard />
+        <div data-tour="wizard">
+          <PoemWizard />
+        </div>
       </div>
     </div>
   );

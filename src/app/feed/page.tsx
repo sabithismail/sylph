@@ -22,7 +22,9 @@ export default function Page() {
           <Link href="/" className="rounded-full border border-stone px-4 py-2 text-sm text-mist transition-transform duration-150 ease-out hover:-translate-y-0.5">Home</Link>
         </header>
         <h1 className="text-4xl text-mist sm:text-5xl" style={{ fontFamily: "var(--font-script)", fontWeight: 700 }}>The garden</h1>
-        <Feed />
+        <div data-tour="feed">
+          <Feed />
+        </div>
       </div>
     </div>
   );

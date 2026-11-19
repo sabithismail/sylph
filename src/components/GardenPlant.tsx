@@ -42,7 +42,7 @@ export function PlantView({ streak: s, total }: { streak: number; total: number 
   const leaf = "#8fa68a";
 
   return (
-    <section aria-label="Your writing streak" className="flex items-center gap-5 rounded-2xl border border-stone bg-deep p-5">
+    <section data-tour="plant" aria-label="Your writing streak" className="flex items-center gap-5 rounded-2xl border border-stone bg-deep p-5">
       <svg width="96" height="110" viewBox="0 0 96 110" role="img" aria-label={`Plant at growth stage ${stage + 1} of 6`} className="shrink-0">
         {stage === 5 && (
           <>

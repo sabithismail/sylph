@@ -39,7 +39,7 @@ export default function Home() {
     <div className="sy-sky relative min-h-dvh">
       <Ambient />
       <div className="relative mx-auto flex min-h-dvh w-full max-w-5xl flex-col gap-12 px-4 py-8 sm:px-8">
-        <header className="flex items-center gap-4">
+        <header data-tour="nav" className="flex items-center gap-4">
           <SylphIcon size={36} glow={false} />
           <SylphWordmark className="w-32" />
           <NavAccount />
@@ -60,11 +60,12 @@ export default function Home() {
           </p>
         </section>
 
-        <div className="sy-home-in" style={{ animationDelay: "0.1s" }}>
+        <div data-tour="seed" className="sy-home-in" style={{ animationDelay: "0.1s" }}>
           <DailySeed />
         </div>
 
         <section
+          data-tour="paths"
           className="sy-home-in grid gap-5 sm:grid-cols-3"
           style={{ animationDelay: "0.15s" }}
         >
@@ -105,7 +106,7 @@ export default function Home() {
           ))}
         </section>
 
-        <section className="flex flex-col gap-5" aria-labelledby="latest-h">
+        <section data-tour="latest" className="flex flex-col gap-5" aria-labelledby="latest-h">
           <div className="flex items-baseline justify-between gap-4">
             <h2 id="latest-h" className="text-3xl text-mist" style={{ fontFamily: "var(--font-script)", fontWeight: 700 }}>
               Latest from the garden
@@ -115,7 +116,7 @@ export default function Home() {
           <Feed limit={4} />
         </section>
 
-        <footer className="mt-auto flex flex-col gap-2 pb-6 text-sm leading-relaxed text-sage">
+        <footer data-tour="footer" className="mt-auto flex flex-col gap-2 pb-6 text-sm leading-relaxed text-sage">
           <p style={{ fontFamily: "var(--font-hand)", fontSize: "1.25rem" }}>
             Grown with care by a student, for anyone carrying something heavy.
           </p>
