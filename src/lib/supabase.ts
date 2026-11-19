@@ -24,7 +24,8 @@ export type PostRow = {
   visibility: "public" | "spirits";
   like_count: number;
   created_at: string;
+  edited_at: string | null;
 };
 
 export const POST_COLUMNS =
-  "id,author_id,author_name,kind,title,body,template,font,contrast,visibility,like_count,created_at";
+  "id,author_id,author_name,kind,title,body,template,font,contrast,visibility,like_count,created_at,edited_at";

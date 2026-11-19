@@ -5,6 +5,7 @@ import { getSupabase } from "@/lib/supabase";
 import { useAuth } from "./useAuth";
 import Avatar from "./Avatar";
 import AvatarPicker from "./AvatarPicker";
+import GardenPlant from "./GardenPlant";
 import JournalList from "./JournalList";
 import { AVATARS, parseAvatar } from "@/lib/avatars";
 import { CARE_MESSAGE } from "@/lib/poem";
@@ -120,6 +121,8 @@ export default function Me() {
           Sign out
         </button>
       </div>
+
+      <GardenPlant />
 
       <form onSubmit={saveProfile} className="flex flex-col gap-4">
         <h3 className="text-2xl text-mist" style={{ fontFamily: "var(--font-script)", fontWeight: 700 }}>Your look</h3>

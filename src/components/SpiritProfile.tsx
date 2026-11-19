@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { POST_COLUMNS, getSupabase, type PostRow } from "@/lib/supabase";
+import { fetchReactions, type Reacts } from "@/lib/reactions";
 import Avatar from "./Avatar";
 import OwnerMark from "./OwnerMark";
 import { CREATOR_ID } from "@/lib/avatars";
@@ -16,6 +17,7 @@ export default function SpiritProfile({ name }: { name: string }) {
   const { me, configured } = useAuth();
   const [prof, setProf] = useState<Prof | null | undefined>(undefined);
   const [posts, setPosts] = useState<PostRow[]>([]);
+  const [reacts, setReacts] = useState<Record<string, Reacts>>({});
   const [rel, setRel] = useState<"none" | "requested" | "incoming" | "spirit">("none");
   const [handle, setHandle] = useState<{ platform: string; handle: string } | null>(null);
   const [note, setNote] = useState("");
@@ -31,7 +33,9 @@ export default function SpiritProfile({ name }: { name: string }) {
       if (!data) return setProf(null);
       setProf(data as Prof);
       const { data: ps } = await sb.from("posts").select(POST_COLUMNS).eq("author_id", data.id).order("created_at", { ascending: false }).limit(30);
-      if (alive) setPosts((ps ?? []) as PostRow[]);
+      if (alive) setPosts((ps ?? []) as unknown as PostRow[]);
+      const rx = await fetchReactions((ps ?? []).map((x) => x.id as string));
+      if (alive) setReacts(rx);
       if (me && me.id !== data.id) {
         const { data: sp } = await sb.from("spirits").select("requester_id,addressee_id,status");
         const row = (sp ?? []).find(
@@ -123,7 +127,7 @@ export default function SpiritProfile({ name }: { name: string }) {
       ) : (
         <div className="grid gap-8 sm:grid-cols-2">
           {posts.map((p) => (
-            <PostCard key={p.id} post={p} me={me} liked={false} relation="none" author={{ avatar: prof.avatar, bio: prof.bio }} onChange={() => undefined} />
+            <PostCard key={p.id} post={p} me={me} liked={false} relation="none" author={{ avatar: prof.avatar, bio: prof.bio }} reacts={reacts[p.id]} onChange={() => undefined} />
           ))}
         </div>
       )}
