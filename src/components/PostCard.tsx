@@ -26,6 +26,7 @@ export default function PostCard({
   relation,
   author,
   reacts,
+  canFind,
   onChange,
 }: {
   post: PostRow;
@@ -34,6 +35,7 @@ export default function PostCard({
   relation: Relation;
   author?: { avatar: string | null; bio: string };
   reacts?: Reacts;
+  canFind?: boolean;
   onChange: () => void;
 }) {
   const [likes, setLikes] = useState(post.like_count);
@@ -264,8 +266,10 @@ export default function PostCard({
         {!mine && relation === "incoming" && (
           <Link href="/me" className={act}>Wants to be your spirit</Link>
         )}
-        {!mine && relation === "spirit" && (
-          <button type="button" className={act} onClick={showHandle}>Spirit ✦ Find them</button>
+        {!mine && canFind && (
+          <button type="button" className={act} onClick={showHandle}>
+            {relation === "spirit" ? "Spirit ✦ Find them" : "Find them"}
+          </button>
         )}
         {mine ? (
           <>

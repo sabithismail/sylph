@@ -24,7 +24,7 @@ export const TOURS: Record<string, TourStep[]> = {
   "/me": [
     { sel: '[data-tour="plant"]', text: "This is your writing plant. It grows every day you write something, from a seed to a bloom." },
     { sel: '[data-tour="look"]', text: "Pick your picture and write a short bio here. It's how spirits see you." },
-    { sel: '[data-tour="handle"]', text: "Add an Instagram or Facebook handle if you'd like spirits to find you. Nobody sees it unless you choose, and then only your spirits." },
+    { sel: '[data-tour="handle"]', text: "Add an Instagram or Facebook handle if you'd like spirits to find you. You choose who sees it: everyone, only your spirits, or only you." },
     { sel: '[data-tour="journal"]', text: "Your private journal. Pieces you kept for yourself live here, and only you can see them." },
   ],
 };

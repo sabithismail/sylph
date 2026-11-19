@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { POST_COLUMNS, getSupabase, type PostRow } from "@/lib/supabase";
 import { fetchReactions, type Reacts } from "@/lib/reactions";
+import { fetchFindable } from "@/lib/handles";
 import Avatar from "./Avatar";
 import OwnerMark from "./OwnerMark";
 import { CREATOR_ID } from "@/lib/avatars";
@@ -17,6 +18,7 @@ export default function SpiritProfile({ name }: { name: string }) {
   const { me, configured } = useAuth();
   const [prof, setProf] = useState<Prof | null | undefined>(undefined);
   const [posts, setPosts] = useState<PostRow[]>([]);
+  const [canFind, setCanFind] = useState(false);
   const [reacts, setReacts] = useState<Record<string, Reacts>>({});
   const [rel, setRel] = useState<"none" | "requested" | "incoming" | "spirit">("none");
   const [handle, setHandle] = useState<{ platform: string; handle: string } | null>(null);
@@ -36,6 +38,8 @@ export default function SpiritProfile({ name }: { name: string }) {
       if (alive) setPosts((ps ?? []) as unknown as PostRow[]);
       const rx = await fetchReactions((ps ?? []).map((x) => x.id as string));
       if (alive) setReacts(rx);
+      const f = await fetchFindable([data.id]);
+      if (alive) setCanFind(f.has(data.id));
       if (me && me.id !== data.id) {
         const { data: sp } = await sb.from("spirits").select("requester_id,addressee_id,status");
         const row = (sp ?? []).find(
@@ -100,8 +104,8 @@ export default function SpiritProfile({ name }: { name: string }) {
           )}
           {rel === "requested" && <span className="text-sm text-sage">Request sent</span>}
           {rel === "incoming" && <Link href="/me" className="rounded-full border border-stone px-4 py-2 text-sm text-mist">Wants to be your spirit</Link>}
-          {rel === "spirit" && (
-            <button type="button" onClick={showHandle} className="rounded-full border border-stone px-4 py-2 text-sm text-mist">Spirit ✦ Find them</button>
+          {canFind && (
+            <button type="button" onClick={showHandle} className="rounded-full border border-stone px-4 py-2 text-sm text-mist">{rel === "spirit" ? "Spirit ✦ Find them" : "Find them"}</button>
           )}
           {handle && (
             <a href={`https://${handle.platform === "instagram" ? "instagram.com" : "facebook.com"}/${handle.handle}`} target="_blank" rel="noopener noreferrer" className="text-base text-mist underline underline-offset-4">
@@ -127,7 +131,7 @@ export default function SpiritProfile({ name }: { name: string }) {
       ) : (
         <div className="grid gap-8 sm:grid-cols-2">
           {posts.map((p) => (
-            <PostCard key={p.id} post={p} me={me} liked={false} relation="none" author={{ avatar: prof.avatar, bio: prof.bio }} reacts={reacts[p.id]} onChange={() => undefined} />
+            <PostCard key={p.id} post={p} me={me} liked={false} relation="none" author={{ avatar: prof.avatar, bio: prof.bio }} reacts={reacts[p.id]} canFind={canFind} onChange={() => undefined} />
           ))}
         </div>
       )}

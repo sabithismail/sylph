@@ -21,7 +21,7 @@ export default function Me() {
   const { me, configured } = useAuth();
   const [platform, setPlatform] = useState<"" | "instagram" | "facebook">("");
   const [handle, setHandle] = useState("");
-  const [vis, setVis] = useState<"private" | "spirits">("private");
+  const [vis, setVis] = useState<"private" | "spirits" | "public">("spirits");
   const [msg, setMsg] = useState("");
   const [rows, setRows] = useState<Row[]>([]);
   const [confirm, setConfirm] = useState("");
@@ -38,7 +38,7 @@ export default function Me() {
     if (mine) {
       setPlatform(mine.handle_platform ?? "");
       setHandle(mine.handle ?? "");
-      setVis(mine.handle_visibility ?? "private");
+      setVis(mine.handle_visibility ?? "spirits");
     }
     const { data: prof } = await sb.from("profiles").select("avatar,bio").eq("id", me.id).maybeSingle();
     setPic(parseAvatar(prof?.avatar, me.name));
@@ -148,7 +148,7 @@ export default function Me() {
 
       <form data-tour="handle" onSubmit={save} className="flex flex-col gap-4">
         <h3 className="text-2xl text-mist" style={{ fontFamily: "var(--font-script)", fontWeight: 700 }}>Where spirits can find you</h3>
-        <p className="text-sm text-mist">Add an Instagram or Facebook handle if you want to be found. Nobody sees it unless you choose to share it, and then only your spirits do.</p>
+        <p className="text-sm text-mist">Add an Instagram or Facebook handle if you want to be found. You choose who can see it.</p>
         <div className="flex gap-2">
           {(["instagram", "facebook"] as const).map((p) => (
             <button key={p} type="button" aria-pressed={platform === p} onClick={() => setPlatform(p)} className={`${btn} ${platform === p ? "border-glow bg-moss" : ""}`}>
@@ -162,8 +162,9 @@ export default function Me() {
           <legend className="sr-only">Who can see my handle</legend>
           {(
             [
-              ["private", "Private"],
+              ["public", "Public"],
               ["spirits", "Visible to my spirits"],
+              ["private", "Only me"],
             ] as const
           ).map(([v, label]) => (
             <button key={v} type="button" aria-pressed={vis === v} onClick={() => setVis(v)} className={`${btn} ${vis === v ? "border-glow bg-moss" : ""}`}>
@@ -171,6 +172,13 @@ export default function Me() {
             </button>
           ))}
         </fieldset>
+        <p className="text-sm text-sage">
+          {vis === "public"
+            ? "Anyone who visits your page or sees your posts can find your handle."
+            : vis === "spirits"
+              ? "Only people you've accepted as spirits can see your handle."
+              : "Nobody can see your handle. It's saved just for you."}
+        </p>
         <div className="flex items-center gap-4">
           <button type="submit" className="rounded-full bg-moss px-6 py-3 text-base font-semibold text-[#f1f3e8]">Save</button>
           <p className="text-sm text-sage" role="status" aria-live="polite">{msg}</p>

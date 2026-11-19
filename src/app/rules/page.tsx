@@ -40,7 +40,7 @@ export default function RulesPage() {
             <li>Your email and password (the password is stored hashed, never as plain text).</li>
             <li>Your display name, which is shown on your posts. Your real name and email are never shown.</li>
             <li>Posts you choose to publish, with their likes and reports.</li>
-            <li>An Instagram or Facebook handle, only if you add one. It stays private unless you choose &ldquo;Visible to my spirits&rdquo;, and then only spirits you accepted can see it.</li>
+            <li>An Instagram or Facebook handle, only if you add one. You choose who sees it: &ldquo;Public&rdquo; means anyone can, &ldquo;Visible to my spirits&rdquo; means only spirits you accepted, and &ldquo;Only me&rdquo; means nobody else.</li>
             <li>A count of how many pieces you wrote today, to keep the free service fair.</li>
           </ul>
           <p className="text-base leading-relaxed text-mist">

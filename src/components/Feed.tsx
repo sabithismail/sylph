@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import { POST_COLUMNS, getSupabase, type PostRow } from "@/lib/supabase";
 import { fetchReactions, type Reacts } from "@/lib/reactions";
+import { fetchFindable } from "@/lib/handles";
 import Loader from "./Loader";
 import PostCard, { type Relation } from "./PostCard";
 import { useAuth } from "./useAuth";
@@ -22,6 +23,7 @@ export default function Feed({ limit = 30 }: { limit?: number }) {
   const [failed, setFailed] = useState(false);
   const [authors, setAuthors] = useState<Record<string, Author>>({});
   const [reacts, setReacts] = useState<Record<string, Reacts>>({});
+  const [findable, setFindable] = useState<Set<string>>(new Set());
   const [kind, setKind] = useState<Kind>("all");
   const [scope, setScope] = useState<"garden" | "spirits">("garden");
 
@@ -57,6 +59,7 @@ export default function Feed({ limit = 30 }: { limit?: number }) {
       setAuthors(Object.fromEntries((ps ?? []).map((r) => [r.id as string, { avatar: r.avatar as string | null, bio: (r.bio as string) ?? "" }])));
     }
     setReacts(await fetchReactions(list.map((x) => x.id)));
+    setFindable(await fetchFindable(authorIds));
     if (me) {
       const { data: l } = await sb.from("likes").select("post_id").eq("user_id", me.id);
       setLikes(new Set((l ?? []).map((r) => r.post_id as string)));
@@ -122,7 +125,7 @@ export default function Feed({ limit = 30 }: { limit?: number }) {
       {controls}
       <div className="grid gap-6 sm:grid-cols-2 sm:gap-8">
         {posts.map((p) => (
-          <PostCard key={p.id} post={p} me={me} liked={likes.has(p.id)} relation={relation(p.author_id)} author={authors[p.author_id]} reacts={reacts[p.id]} onChange={load} />
+          <PostCard key={p.id} post={p} me={me} liked={likes.has(p.id)} relation={relation(p.author_id)} author={authors[p.author_id]} reacts={reacts[p.id]} canFind={findable.has(p.author_id)} onChange={load} />
         ))}
       </div>
     </div>
