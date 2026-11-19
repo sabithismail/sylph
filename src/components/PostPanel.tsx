@@ -18,6 +18,7 @@ export default function PostPanel({
   template,
   font,
   contrast,
+  onPosted,
 }: {
   kind: "poem" | "story" | "quote";
   title: string;
@@ -25,6 +26,7 @@ export default function PostPanel({
   template: string;
   font: string;
   contrast: Contrast;
+  onPosted?: () => void;
 }) {
   const { me, configured } = useAuth();
   const [visibility, setVisibility] = useState<"public" | "spirits">("public");
@@ -70,6 +72,7 @@ export default function PostPanel({
     setBusy(false);
     if (!error) {
       setDone(true);
+      onPosted?.();
       return;
     }
     setMsg(error.message.includes("care_needed") ? CARE_MESSAGE : "Couldn't post just now. Please try again.");
@@ -78,8 +81,8 @@ export default function PostPanel({
   if (!configured) return null;
 
   return (
-    <div className="flex flex-col gap-3 border-t border-stone pt-5">
-      <p className="text-sm text-mist">Post to Sylph</p>
+    <div className="flex flex-col gap-3 rounded-2xl border border-glow/50 bg-deep p-5">
+      <p className="text-lg font-semibold text-mist">Share it with the garden</p>
       {me === undefined ? null : me === null ? (
         <p className="text-base text-mist">
           <Link href="/login" target="_blank" className="underline underline-offset-4">
@@ -135,8 +138,7 @@ export default function PostPanel({
               {saved ? "Saved to your journal ✦" : "Keep in my journal"}
             </button>
           </div>
-          <p className="text-sm text-sage">Your journal is private. Only you can see it.</p>
-          <p className="text-sm text-sage">Posting as {me.name}. Your real name and email stay private.</p>
+          <p className="text-sm text-sage">It posts exactly as the card above looks. Your journal is private; only you can see it. Posting as {me.name}. Your real name and email stay private.</p>
         </>
       )}
       {msg && (

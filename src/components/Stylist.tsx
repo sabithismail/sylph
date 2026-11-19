@@ -27,6 +27,9 @@ export default function Stylist({
   const [t, setT] = useState(TEMPLATES[0].id);
   const [f, setF] = useState(kind === "story" ? "lora" : FONTS[0].id);
   const [c, setC] = useState<Contrast>("normal");
+  const postRef = useRef<HTMLDivElement>(null);
+  const [panelSeen, setPanelSeen] = useState(true);
+  const [posted, setPosted] = useState(false);
 
   useEffect(() => {
     try {
@@ -49,6 +52,19 @@ export default function Stylist({
     }
   }, [t, f, c]);
 
+
+  useEffect(() => {
+    const el = postRef.current;
+    if (!el || typeof IntersectionObserver === "undefined") return;
+    const io = new IntersectionObserver(([e]) => setPanelSeen(e.isIntersecting), { threshold: 0.2 });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
+  function toPanel() {
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    postRef.current?.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "center" });
+  }
 
   const plain = `${title && kind !== "quote" ? title + "\n\n" : ""}${text}`;
   const site = typeof window === "undefined" ? "" : window.location.origin;
@@ -111,6 +127,10 @@ export default function Stylist({
 
       <StyledCard ref={cardRef} title={title} text={text} kind={kind} template={t} font={f} contrast={c} />
 
+      <div ref={postRef}>
+        <PostPanel kind={kind} title={title ?? ""} text={text} template={t} font={f} contrast={c} onPosted={() => setPosted(true)} />
+      </div>
+
       <fieldset className="flex flex-col gap-2">
         <legend className="mb-1 text-sm text-mist">Template</legend>
         <div className="flex flex-wrap gap-2">
@@ -164,7 +184,15 @@ export default function Stylist({
         </div>
         <p className="text-sm text-sage" role="status" aria-live="polite">{note}</p>
       </div>
-      <PostPanel kind={kind} title={title ?? ""} text={text} template={t} font={f} contrast={c} />
+      {!panelSeen && !posted && text.trim() && (
+        <button
+          type="button"
+          onClick={toPanel}
+          className="sy-bubble fixed bottom-4 left-1/2 z-50 -translate-x-1/2 rounded-full bg-moss px-6 py-3 text-base font-semibold text-[#f1f3e8] shadow-xl ring-1 ring-glow/60 transition-transform duration-150 ease-out active:scale-[0.97]"
+        >
+          Post or save ✦
+        </button>
+      )}
     </section>
   );
 }
