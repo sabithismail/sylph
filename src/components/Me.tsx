@@ -5,6 +5,7 @@ import { getSupabase } from "@/lib/supabase";
 import { useAuth } from "./useAuth";
 import Avatar from "./Avatar";
 import AvatarPicker from "./AvatarPicker";
+import JournalList from "./JournalList";
 import { AVATARS, parseAvatar } from "@/lib/avatars";
 import { CARE_MESSAGE } from "@/lib/poem";
 
@@ -190,6 +191,8 @@ export default function Me() {
           </div>
         ))}
       </section>
+
+      <JournalList me={me} />
 
       <section className="flex flex-col gap-3 border-t border-stone pt-8">
         <h3 className="text-2xl text-mist" style={{ fontFamily: "var(--font-script)", fontWeight: 700 }}>Delete my account</h3>

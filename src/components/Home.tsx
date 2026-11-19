@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Ambient from "./Ambient";
+import DailySeed from "./DailySeed";
 import Feed from "./Feed";
 import Tilt from "./Tilt";
 import NavAccount from "./NavAccount";
@@ -58,6 +59,10 @@ export default function Home() {
             Sit by the lantern. Whatever you carry, Sylph will help you turn it into something gentle.
           </p>
         </section>
+
+        <div className="sy-home-in" style={{ animationDelay: "0.1s" }}>
+          <DailySeed />
+        </div>
 
         <section
           className="sy-home-in grid gap-5 sm:grid-cols-3"

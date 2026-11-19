@@ -17,11 +17,14 @@ export default function Feed({ limit = 30 }: { limit?: number }) {
   const [spirits, setSpirits] = useState<SpiritRow[]>([]);
   const [failed, setFailed] = useState(false);
   const [authors, setAuthors] = useState<Record<string, Author>>({});
+  const [kind, setKind] = useState<"all" | "poem" | "story" | "quote">("all");
 
   const load = useCallback(async () => {
     const sb = getSupabase();
     if (!sb) return;
-    const { data, error } = await sb.from("posts").select(POST_COLUMNS).order("created_at", { ascending: false }).limit(limit);
+    let q = sb.from("posts").select(POST_COLUMNS).order("created_at", { ascending: false }).limit(limit);
+    if (kind !== "all") q = q.eq("kind", kind);
+    const { data, error } = await q;
     if (error) return setFailed(true);
     setPosts(data as PostRow[]);
     const ids = [...new Set((data as PostRow[]).map((x) => x.author_id))];
@@ -37,7 +40,7 @@ export default function Feed({ limit = 30 }: { limit?: number }) {
       setLikes(new Set((l.data ?? []).map((r) => r.post_id as string)));
       setSpirits((s.data ?? []) as SpiritRow[]);
     }
-  }, [me, limit]);
+  }, [me, limit, kind]);
 
   useEffect(() => {
     if (me !== undefined) void load();
@@ -56,18 +59,39 @@ export default function Feed({ limit = 30 }: { limit?: number }) {
   if (!configured) return null;
   if (failed) return <p className="text-base text-mist">The garden is quiet right now. Please try again soon.</p>;
   if (posts === null) return <Loader size={52} phrases={["Gathering poems…", "Walking the garden paths…"]} />;
+  const chips = limit > 6 && (
+    <div role="group" aria-label="Show" className="flex flex-wrap gap-2">
+      {(["all", "poem", "story", "quote"] as const).map((k) => (
+        <button
+          key={k}
+          type="button"
+          aria-pressed={kind === k}
+          onClick={() => setKind(k)}
+          className={`rounded-full border px-4 py-1.5 text-sm text-mist ${kind === k ? "border-glow bg-moss" : "border-stone"}`}
+        >
+          {k === "all" ? "All" : k === "poem" ? "Poems" : k === "story" ? "Stories" : "Quotes"}
+        </button>
+      ))}
+    </div>
+  );
   if (posts.length === 0) {
     return (
-      <p className="text-xl text-mist" style={{ fontFamily: "var(--font-hand)" }}>
-        Nothing here yet. <Link href="/poem" className="underline underline-offset-4">Write the first one.</Link>
-      </p>
+      <div className="flex flex-col gap-5">
+        {chips}
+        <p className="text-xl text-mist" style={{ fontFamily: "var(--font-hand)" }}>
+          Nothing here yet. <Link href="/poem" className="underline underline-offset-4">Write the first one.</Link>
+        </p>
+      </div>
     );
   }
   return (
+    <div className="flex flex-col gap-6">
+    {chips}
     <div className="grid gap-6 sm:grid-cols-2 sm:gap-8">
       {posts.map((p) => (
         <PostCard key={p.id} post={p} me={me} liked={likes.has(p.id)} relation={relation(p.author_id)} author={authors[p.author_id]} onChange={load} />
       ))}
+    </div>
     </div>
   );
 }

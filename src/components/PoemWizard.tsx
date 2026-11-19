@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useState } from "react";
+import { useEffect, useId, useState } from "react";
 import { authedPost } from "@/lib/api";
 import Stylist from "./Stylist";
 import Loader from "./Loader";
@@ -47,6 +47,11 @@ export default function PoemWizard() {
   const [care, setCare] = useState("");
   const [result, setResult] = useState<Result | null>(null);
   const [copied, setCopied] = useState(false);
+
+  useEffect(() => {
+    const seed = new URLSearchParams(window.location.search).get("seed");
+    if (seed) setStory((cur) => (cur.trim() ? cur : seed.slice(0, 200) + " "));
+  }, []);
 
   const info = formInfo(form);
   const storyOk = story.trim().length >= STORY_MIN;

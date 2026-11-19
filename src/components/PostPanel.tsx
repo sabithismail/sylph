@@ -31,6 +31,26 @@ export default function PostPanel({
   const [busy, setBusy] = useState(false);
   const [done, setDone] = useState(false);
   const [msg, setMsg] = useState("");
+  const [saved, setSaved] = useState(false);
+
+  async function keep() {
+    const sb = getSupabase();
+    if (!sb || !me) return;
+    setBusy(true);
+    setMsg("");
+    const { error } = await sb.from("journal").insert({
+      user_id: me.id,
+      kind,
+      title: kind === "quote" ? "" : title.slice(0, 120),
+      body: text.slice(0, 6000),
+      template,
+      font,
+      contrast,
+    });
+    setBusy(false);
+    if (!error) return setSaved(true);
+    setMsg(error.message.includes("journal_full") ? "Your journal is full (50 pieces). Delete one in My garden to make room." : "Couldn't save just now. Please try again.");
+  }
 
   async function post() {
     const sb = getSupabase();
@@ -102,11 +122,20 @@ export default function PostPanel({
               </button>
             ))}
           </fieldset>
-          <div>
+          <div className="flex flex-wrap items-center gap-3">
             <button type="button" className={btn} disabled={busy || !text.trim()} onClick={post}>
-              {busy ? "Posting…" : "Post to Sylph"}
+              {busy ? "Working…" : "Post to Sylph"}
+            </button>
+            <button
+              type="button"
+              disabled={busy || !text.trim() || saved}
+              onClick={keep}
+              className="rounded-full border border-stone px-5 py-3 text-base text-mist transition-transform duration-150 ease-out hover:-translate-y-0.5 active:scale-[0.97] disabled:opacity-60"
+            >
+              {saved ? "Saved to your journal ✦" : "Keep in my journal"}
             </button>
           </div>
+          <p className="text-sm text-sage">Your journal is private. Only you can see it.</p>
           <p className="text-sm text-sage">Posting as {me.name}. Your real name and email stay private.</p>
         </>
       )}
