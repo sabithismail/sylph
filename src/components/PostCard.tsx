@@ -111,6 +111,20 @@ export default function PostCard({
     }
   }
 
+  async function share() {
+    const url = `${window.location.origin}/p/${post.id}`;
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: post.title || "Sylph", url });
+        return;
+      }
+      await navigator.clipboard.writeText(url);
+      setNote("Link copied.");
+    } catch (e) {
+      if (!(e instanceof DOMException && e.name === "AbortError")) setNote("Couldn't share the link.");
+    }
+  }
+
   async function report() {
     const sb = getSupabase();
     if (!sb || !me) return void needLogin();
@@ -259,6 +273,9 @@ export default function PostCard({
           {used.length ? used.map((r) => r.icon).join("") : "✦"}
           {total > 0 ? ` ${total}` : ""}
         </button>
+        {post.visibility === "public" && (
+          <button type="button" className={act} onClick={share}>Share link</button>
+        )}
         {!mine && relation === "none" && (
           <button type="button" className={act} onClick={request}>Be a spirit</button>
         )}

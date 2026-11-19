@@ -10,6 +10,8 @@ import "./globals.css";
 import CatGuide from "@/components/CatGuide";
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://sylphgarden.vercel.app"),
+  appleWebApp: { capable: true, title: "Sylph", statusBarStyle: "black-translucent" },
   title: "Sylph",
   description:
     "A garden spirit that turns your story into poems, stories and quotes.",

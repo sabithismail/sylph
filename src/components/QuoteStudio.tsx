@@ -3,6 +3,7 @@
 import { useId, useState } from "react";
 import { authedPost } from "@/lib/api";
 import Stylist from "./Stylist";
+import WriteTools from "./WriteTools";
 import Loader from "./Loader";
 import { QUOTES } from "@/lib/quotes";
 
@@ -113,6 +114,7 @@ export default function QuoteStudio() {
             className="w-full resize-y rounded-2xl border border-stone bg-night p-4 leading-relaxed text-mist placeholder:text-sage"
             style={{ fontFamily: "var(--font-hand)", fontSize: "1.4rem" }}
           />
+          <WriteTools onText={(t) => setPast((cur) => ((cur.trim() ? cur.trimEnd() + " " : "") + t.trim()).slice(0, 1200))} />
           {loading && <Loader size={52} phrases={["Sylph is listening…", "Looking for the right image…", "Folding it into a line…"]} />}
           <div className="flex items-center justify-between gap-3">
             <p className="text-sm text-sage">{past.trim().length}/1200</p>

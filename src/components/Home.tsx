@@ -1,6 +1,8 @@
 import Link from "next/link";
 import Ambient from "./Ambient";
+import BreatheButton from "./Breathe";
 import DailySeed from "./DailySeed";
+import InstallButton from "./InstallButton";
 import Feed from "./Feed";
 import Tilt from "./Tilt";
 import NavAccount from "./NavAccount";
@@ -58,6 +60,11 @@ export default function Home() {
           >
             Sit by the lantern. Whatever you carry, Sylph will help you turn it into something gentle.
           </p>
+          <div>
+            <BreatheButton className="rounded-full border border-stone px-5 py-2.5 text-sm text-mist transition-transform duration-150 ease-out hover:-translate-y-0.5 active:scale-[0.97]">
+              🌿 Take a breath
+            </BreatheButton>
+          </div>
         </section>
 
         <div data-tour="seed" className="sy-home-in" style={{ animationDelay: "0.1s" }}>
@@ -120,6 +127,7 @@ export default function Home() {
           <p style={{ fontFamily: "var(--font-hand)", fontSize: "1.25rem" }}>
             Grown with care by a student, for anyone carrying something heavy.
           </p>
+          <InstallButton />
           <p>
             If it ever feels too heavy, Tele-MANAS (India) is free at 14416, any time.{" "}
             <Link href="/about" className="underline underline-offset-4">About</Link>{" · "}

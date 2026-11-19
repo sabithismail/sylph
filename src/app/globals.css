@@ -413,3 +413,20 @@ body {
   .sy-cat { transition-duration: 1ms; }
   .sy-cat-idle, .sy-cat-walk, .sy-bubble { animation: none; }
 }
+
+/* Take a breath: 12s cycle = in 4s, hold 2s, out 6s */
+.sy-breath {
+  background: radial-gradient(circle at 50% 45%, #f4f8c8 0%, #e6eda0 35%, rgba(230, 237, 160, 0.25) 70%, transparent 100%);
+  box-shadow: 0 0 80px 10px rgba(230, 237, 160, 0.35);
+  animation: sy-breathe 12s ease-in-out infinite;
+}
+.sy-breath-rest { animation: none; transform: scale(0.8); }
+@keyframes sy-breathe {
+  0% { transform: scale(0.55); }
+  33.3% { transform: scale(1); }
+  50% { transform: scale(1); }
+  100% { transform: scale(0.55); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sy-breath { animation: none; transform: scale(0.8); }
+}

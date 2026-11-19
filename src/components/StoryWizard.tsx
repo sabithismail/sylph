@@ -3,6 +3,8 @@
 import { useId, useState } from "react";
 import { authedPost } from "@/lib/api";
 import Stylist from "./Stylist";
+import ReadAloud from "./ReadAloud";
+import WriteTools from "./WriteTools";
 import Loader from "./Loader";
 import { GRAMMAR } from "@/lib/poem";
 import { PRESETS, VOICES, WORDS_MAX, WORDS_MIN, type StoryVoice } from "@/lib/story";
@@ -118,6 +120,7 @@ export default function StoryWizard() {
               style={{ fontFamily: "var(--font-hand)", fontSize: "1.4rem" }}
             />
             <p className="text-sm text-sage">{past.trim().length}/2000</p>
+            <WriteTools onText={(t) => setPast((cur) => ((cur.trim() ? cur.trimEnd() + " " : "") + t.trim()).slice(0, 2000))} />
           </div>
           <div className="flex justify-end">
             <button type="button" className={btnPrimary} disabled={!pastOk} onClick={() => setStep("shape")}>
@@ -273,6 +276,7 @@ export default function StoryWizard() {
             <button type="button" className={btnGhost} onClick={write} disabled={loading}>
               {loading ? "Writing…" : "Write another version"}
             </button>
+            <ReadAloud title={result.title} text={result.story} />
             <button type="button" className={btnGhost} onClick={() => setStep("shape")}>Change the shape</button>
             <button type="button" className={btnGhost} onClick={startOver}>Start over</button>
           </div>

@@ -4,6 +4,8 @@ import { useEffect, useId, useState } from "react";
 import { authedPost } from "@/lib/api";
 import Stylist from "./Stylist";
 import Loader from "./Loader";
+import ReadAloud from "./ReadAloud";
+import WriteTools from "./WriteTools";
 import {
   FORMS,
   GRAMMAR,
@@ -175,6 +177,7 @@ export default function PoemWizard() {
               {story.trim().length}/{STORY_MAX}
               {!storyOk && story.length > 0 ? " · a little more, please" : ""}
             </p>
+            <WriteTools onText={(t) => setStory((cur) => ((cur.trim() ? cur.trimEnd() + " " : "") + t.trim()).slice(0, STORY_MAX))} />
           </div>
 
           <div className="flex justify-end">
@@ -349,6 +352,7 @@ export default function PoemWizard() {
             <button type="button" className={btnPrimary} onClick={copy}>
               {copied ? "Copied" : "Copy poem"}
             </button>
+            <ReadAloud title={result.title} text={result.poem} />
             <button type="button" className={btnGhost} onClick={write} disabled={loading}>
               {loading ? "Writing…" : "Write another version"}
             </button>
