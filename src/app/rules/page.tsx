@@ -61,7 +61,7 @@ export default function RulesPage() {
             <li>Post only your own words, or pieces Sylph helped you write.</li>
             <li>No harassment, hate, sexual content, or sharing other people&apos;s private details.</li>
             <li>No content that encourages self-harm. Posts with that wording are not published.</li>
-            <li>Use Report on anything that breaks these rules. Three reports hide a post until it is reviewed.</li>
+            <li>Use Report on anything that breaks these rules. Three reports hide a post until the garden keeper reviews it. Reported posts, including spirits-only ones, may be read during that review. Reporters stay anonymous.</li>
             <li>Never use someone&apos;s shared handle to pressure or follow them anywhere they did not invite you.</li>
           </ul>
         </section>

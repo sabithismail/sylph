@@ -7,7 +7,7 @@ import Avatar from "./Avatar";
 import AvatarPicker from "./AvatarPicker";
 import GardenPlant from "./GardenPlant";
 import JournalList from "./JournalList";
-import { AVATARS, parseAvatar } from "@/lib/avatars";
+import { AVATARS, CREATOR_ID, parseAvatar } from "@/lib/avatars";
 import { CARE_MESSAGE } from "@/lib/poem";
 
 type Row = { requester_id: string; addressee_id: string; status: "pending" | "accepted" };
@@ -121,6 +121,12 @@ export default function Me() {
           Sign out
         </button>
       </div>
+
+      {me.id === CREATOR_ID && (
+        <a href="/admin" className="w-fit rounded-full border border-glow px-5 py-2.5 text-sm font-semibold text-glow">
+          Garden keeper: review reports
+        </a>
+      )}
 
       <GardenPlant />
 
