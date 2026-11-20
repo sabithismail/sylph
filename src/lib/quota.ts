@@ -37,3 +37,20 @@ export async function checkQuota(req: Request, ip: string): Promise<string | nul
     ? `Guests get ${ANON_DAILY} writings a day. Join Sylph (it's free) for ${SIGNED_IN_DAILY} a day.`
     : null;
 }
+
+/** True when the request carries a valid signed-in user's token. */
+export async function verifyUser(req: Request): Promise<boolean> {
+  const auth = req.headers.get("authorization");
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.NEXT_PUBLIC_SUPABASE_KEY;
+  if (!auth?.startsWith("Bearer ") || !url || !key) return false;
+  try {
+    const sb = createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } });
+    const { data, error } = await sb.auth.getUser(auth.slice(7));
+    return !error && Boolean(data.user);
+  } catch {
+    return false;
+  }
+}
+
+export const SIGN_IN_MESSAGE = "Join Sylph (it's free) to write with it.";

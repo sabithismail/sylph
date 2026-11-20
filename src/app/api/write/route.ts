@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { checkQuota } from "@/lib/quota";
+import { SIGN_IN_MESSAGE, checkQuota, verifyUser } from "@/lib/quota";
 import {
   CARE_MESSAGE,
   DEMO_POEM,
@@ -44,6 +44,10 @@ export async function POST(req: Request) {
 
   if (RISK.test(parsed.req.story)) {
     return NextResponse.json({ care: true, message: CARE_MESSAGE });
+  }
+
+  if (!(await verifyUser(req))) {
+    return NextResponse.json({ error: SIGN_IN_MESSAGE, signin: true }, { status: 401 });
   }
 
   const key = process.env.GEMINI_API_KEY || process.env.SYLPH_API_KEY;

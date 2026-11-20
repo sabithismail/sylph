@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import Ambient from "@/components/Ambient";
+import SignInGate from "@/components/SignInGate";
 import StoryWizard from "@/components/StoryWizard";
 import SylphIcon from "@/components/SylphIcon";
 
@@ -32,7 +33,9 @@ export default function StoryPage() {
           </Link>
         </header>
         <div data-tour="wizard">
-          <StoryWizard />
+          <SignInGate what="write a story">
+            <StoryWizard />
+          </SignInGate>
         </div>
       </div>
     </div>

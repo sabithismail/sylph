@@ -4,6 +4,7 @@ import { useId, useState } from "react";
 import { authedPost } from "@/lib/api";
 import Stylist from "./Stylist";
 import WriteTools from "./WriteTools";
+import SignInGate from "./SignInGate";
 import Loader from "./Loader";
 import { QUOTES } from "@/lib/quotes";
 
@@ -94,6 +95,7 @@ export default function QuoteStudio() {
       </div>
 
       {tab === "past" && (
+        <SignInGate what="turn a moment into a quote">
         <div className="flex flex-col gap-4">
           <p className="text-2xl text-mist" style={{ fontFamily: "var(--font-hand)", fontWeight: 500 }}>
             Share one hard moment. Sylph will turn it into a line or two, with a touch of nature.
@@ -123,6 +125,7 @@ export default function QuoteStudio() {
             </button>
           </div>
         </div>
+        </SignInGate>
       )}
 
       {error && (

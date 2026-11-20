@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import Ambient from "@/components/Ambient";
+import SignInGate from "@/components/SignInGate";
 import PoemWizard from "@/components/PoemWizard";
 import SylphIcon from "@/components/SylphIcon";
 
@@ -32,7 +33,9 @@ export default function PoemPage() {
           </Link>
         </header>
         <div data-tour="wizard">
-          <PoemWizard />
+          <SignInGate what="write a poem">
+            <PoemWizard />
+          </SignInGate>
         </div>
       </div>
     </div>
